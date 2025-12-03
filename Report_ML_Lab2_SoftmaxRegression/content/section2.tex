@@ -1,2 +1,45 @@
 \pagebreak
 \section{Nền tảng toán học và triển khai mô hình}
+\subsection{Nền tảng toán học}
+\subsubsection{Mô hình Softmax Regression}
+Mô hình \textit{Softmax Regression} được sử dụng để giải quyết bài toán phân loại đa lớp (\textit{multi-class classification}) trên tập dữ liệu MNIST. Với một mẫu đầu vào được biểu diễn bởi vector đặc trưng $\displaystyle x \in \mathbb{R}^{d}$ (trong đó $d$ là số chiều của không gian đặc trưng), mô hình trước tiên tính toán điểm số tuyến tính (logits) tương ứng với $K$ lớp thông qua phép biến đổi sau:
+\begin{center}
+    $\displaystyle z = Wx+b$.
+\end{center}
+Trong đó:
+\begin{itemize}
+    \item $W \in \mathbb{R}^{K \times d}$ là ma trận trọng số;
+    \item $b \in \mathbb{R}^{K}$ là vector bias;
+    \item $z \in \mathbb{R}^{K}$ là vector điểm số.
+\end{itemize}
+Để chuyển các điểm số tuyến tính $z$ thành một phân phối xác suất hợp lệ trên không gian nhãn, mô hình sử dụng hàm kích hoạt \textit{softmax}. Xác suất để mẫu $x$ thuộc lớp $k$ được xác định bởi:
+\begin{center}
+    $\displaystyle \hat{y}_k = P(y = k | x) = softmax(z_k) = \frac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}}$.
+\end{center}
+Trong đó, $z_k$ là điểm số ứng với lớp $k$, và mẫu số $\sum_{j=1}^{K} e^{z_j}$ đảm bảo rằng tổng các xác suất bằng 1, tạo thành một phân phối xác suất chuẩn hóa trên $K$ lớp.
+\subsubsection{Hàm mất mát (Loss Function)}
+Để huấn luyện mô hình, ta sử dụng hàm mất mát \textit{Cross-Entropy} nhằm đo lường mức độ khác biệt giữa phân phối xác suất dự đoán và nhãn thực tế. Đồng thời, nhằm hạn chế hiện tượng quá khớp (\textit{overfitting}), một thành phần điều chuẩn L2 (\textit{L2 Regularization}) được bổ sung vào hàm mất mát tổng quát. Cụ thể, hàm mất mát được định nghĩa như sau:
+\begin{center}
+    $\displaystyle J(W, b) = - \frac{1}{N} \sum_{i=1}^{N} \sum_{k=1}^{K} y_{i,k} \log \hat{y}_{ik} + \frac{\lambda}{2} \sum_{l} \sum_{m} W_{lm}^2$.
+\end{center}
+Trong đó:
+\begin{itemize}
+    \item $N$ là số lượng mẫu trong một batch;
+    \item $y_{i,k}$ là thành phần của vector one-hot label (bằng 1 nếu mẫu $i$ thuộc lớp $k$, ngược lại bằng 0);
+    \item $\lambda$ (ký hiệu là \texttt{reg} trong mã nguồn) là hệ số điều chuẩn.
+\end{itemize}
+Trong biểu thức trên, hạng tử cross-entropy (hạng tử thứ nhất) thúc đẩy mô hình tối đa hóa xác suất dự đoán đúng, trong khi hạng tử điều chuẩn (hạng tử thứ hai) giúp giới hạn độ lớn của các trọng số, từ đó nâng cao khả năng tổng quát hóa của mô hình.
+\subsubsection{Giải thuật tối ưu Gradient Descent}
+Quá trình huấn luyện mô hình được thực hiện bằng thuật toán \textit{Mini-batch Gradient Descent}. Ở mỗi bước lặp, ta tính gradient của hàm mất mát đối với các tham số $W$ và $b$. Nhờ đặc tính giải tích thuận lợi của hàm softmax khi kết hợp với hàm mất mát cross-entropy, các biểu thức đạo hàm thu được có dạng đơn giản và hiệu quả như sau:
+\begin{center}
+    $\displaystyle \frac{\partial J}{\partial z} = \hat{y} - y$,
+    $\displaystyle \frac{\partial J}{\partial W} = \frac{1}{N} X^T (\hat{y}-y) + \lambda W$,
+    $\displaystyle \frac{\partial J}{\partial b} = \frac{1}{N} \sum (\hat{y}-y)$.
+\end{center}
+Trong đó $X \in \mathbb{R}^{N \times d}$ là ma trận dữ liệu đầu vào của mini-batch gồm $N$ mẫu.\\
+Quy tắc cập nhật tham số với tốc độ học $\alpha$ (\textit{learning rate}) được thể hiện như sau:
+\begin{center}
+    $\displaystyle W \leftarrow W - \alpha \frac{\partial J}{\partial W}$,
+    $\displaystyle b \leftarrow b - \alpha \frac{\partial J}{\partial b}$.
+\end{center}
+Nhờ việc sử dụng mini-batch, quá trình tối ưu vừa duy trì sự ổn định của gradient, vừa đảm bảo hiệu năng tính toán phù hợp cho các tập dữ liệu lớn.
