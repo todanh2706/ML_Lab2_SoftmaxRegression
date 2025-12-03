@@ -19,6 +19,7 @@ class SoftmaxRegression:
         Z: (N, K)
         return: (N, K) probabilities
         """
+        # Numerical Stability
         Z_shift = Z - Z.max(axis=1, keepdims=True)
         exp_Z = np.exp(Z_shift)
         return exp_Z / exp_Z.sum(axis=1, keepdims=True)
@@ -108,6 +109,7 @@ class SoftmaxRegression:
 
     # --------- predict ---------
     def predict_proba(self, X):
+        # Model hypothesis
         scores = X @ self.W.T + self.b
         probs = self.softmax(scores)
         return probs
