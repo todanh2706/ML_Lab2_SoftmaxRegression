@@ -43,3 +43,87 @@ Quy tắc cập nhật tham số với tốc độ học $\alpha$ (\textit{learn
     $\displaystyle b \leftarrow b - \alpha \frac{\partial J}{\partial b}$.
 \end{center}
 Nhờ việc sử dụng mini-batch, quá trình tối ưu vừa duy trì sự ổn định của gradient, vừa đảm bảo hiệu năng tính toán phù hợp cho các tập dữ liệu lớn.
+
+
+\subsubsection{Quy trình huấn luyện mô hình}
+
+\begin{algorithm}[H]
+\caption{Hàm huấn luyện \texttt{fit}}
+\begin{algorithmic}[1]
+\Function{fit}{$X_{\text{train}}, y_{\text{train}}, X_{\text{val}}, y_{\text{val}}, \text{epochs}, \text{batch\_size}$}
+    \State $N \gets \text{rows}(X_{\text{train}})$
+    \State $\text{history.train\_loss} \gets [\,]$
+    \State $\text{history.val\_acc} \gets [\,]$
+    \For{$\text{epoch} \gets 1$ \textbf{to} $\text{epochs}$}
+        \State $\text{indices} \gets \text{RandomPermutation}(\{0,\dots,N-1\})$
+        \State $X_{\text{train}} \gets X_{\text{train}}[\text{indices}]$
+        \State $y_{\text{train}} \gets y_{\text{train}}[\text{indices}]$
+        \State $\text{epoch\_loss} \gets 0$
+        \State $\text{n\_batches} \gets 0$
+        \For{$\text{start} \gets 0$ \textbf{to} $N$ \textbf{step} $\text{batch\_size}$}
+            \State $\text{end} \gets \text{start} + \text{batch\_size}$
+            \State $X_{\text{batch}} \gets X_{\text{train}}[\text{start}:\text{end}]$
+            \State $y_{\text{batch}} \gets y_{\text{train}}[\text{start}:\text{end}]$
+            \State $(L, \nabla_W, \nabla_b) \gets \text{ComputeLossAndGrads}(X_{\text{batch}}, y_{\text{batch}})$
+            \State $\text{epoch\_loss} \gets \text{epoch\_loss} + L$
+            \State $\text{n\_batches} \gets \text{n\_batches} + 1$
+            \State $W \gets W - \text{lr} \cdot \nabla_W$
+            \State $b \gets b - \text{lr} \cdot \nabla_b$
+        \EndFor
+        \State $\text{avg\_loss} \gets \text{epoch\_loss} / \max(\text{n\_batches}, 1)$
+        \State $\text{history.train\_loss.append}(\text{avg\_loss})$
+        \If{$X_{\text{val}} \neq \varnothing$ \textbf{and} $y_{\text{val}} \neq \varnothing$}
+            \State $\hat{y}_{\text{val}} \gets \text{Predict}(X_{\text{val}})$
+            \State $\text{val\_acc} \gets \text{Mean}(\hat{y}_{\text{val}} = y_{\text{val}})$
+            \State $\text{history.val\_acc.append}(\text{val\_acc})$
+        \EndIf
+    \EndFor
+    \State \Return $\text{history}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{itemize}
+    \item Xáo trộn (\emph{shuffle}) tập huấn luyện ở đầu mỗi epoch bằng một hoán vị ngẫu nhiên các chỉ số.
+    \item Chia dữ liệu đã xáo trộn thành các mini-batch có kích thước \texttt{batch\_size}.
+    \item Với mỗi mini-batch, gọi \texttt{ComputeLossAndGrads} để tính giá trị hàm mất mát và gradient theo $W$, $b$.
+    \item Cập nhật tham số theo quy tắc gradient descent: $W \leftarrow W - \text{lr} \cdot \nabla_W$, $b \leftarrow b - \text{lr} \cdot \nabla_b$.
+    \item Tính loss trung bình của toàn bộ các mini-batch trong một epoch và lưu vào \texttt{history.train\_loss}.
+    \item Nếu có tập validation, tính độ chính xác trên $X_{\text{val}}$ và lưu vào \texttt{history.val\_acc}.
+\end{itemize}
+
+\subsubsection{Quy trình suy diễn và dự đoán}
+
+\begin{algorithm}[H]
+\caption{Hàm suy diễn \texttt{predict\_proba} và \texttt{predict}}
+\begin{algorithmic}[1]
+\Function{predict\_proba}{$X$}
+    \State $Z \gets X W^\top + b$
+    \State $Z' \gets Z - \max(Z \text{ theo từng hàng})$
+    \State $\expZ \gets \exp(Z')$
+    \State $P \gets \expZ / \sum(\expZ \text{ theo từng hàng})$
+    \State \Return $P$
+\EndFunction
+
+\Function{predict}{$X$}
+    \State $P \gets \text{predict\_proba}(X)$
+    \State $\hat{y} \gets \arg\max(P \text{ theo từng hàng})$
+    \State \Return $\hat{y}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{itemize}
+    \item \texttt{predict\_proba}:
+    \begin{itemize}
+        \item Tính điểm số tuyến tính $Z = X W^\top + b$ cho tất cả mẫu và tất cả lớp.
+        \item Chuẩn hoá $Z$ theo từng hàng để ổn định số học, sau đó áp dụng hàm softmax để thu được ma trận xác suất $P$.
+    \end{itemize}
+    \item \texttt{predict}:
+    \begin{itemize}
+        \item Gọi lại \texttt{predict\_proba} để lấy phân phối xác suất trên các lớp cho từng mẫu.
+        \item Chọn lớp có xác suất lớn nhất bằng toán tử $\arg\max$ theo chiều lớp, thu được vector nhãn dự đoán $\hat{y}$.
+    \end{itemize}
+\end{itemize}
+
