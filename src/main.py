@@ -3,7 +3,8 @@ import os
 import time
 from model import SoftmaxRegression
 from features import FeatureExtractor
-from data import train_val_split
+from data import train_val_split, load_mnist_npz
+from dataLoader import MnistDataloader
 
 # Cấu hình Hyperparameters
 CONFIG = {
@@ -16,19 +17,86 @@ CONFIG = {
 }
 
 def load_mnist_data():
-    """
-    Hàm tải dữ liệu MNIST.
-    Lưu ý: Nếu không được dùng keras để tải, bạn hãy thay thế bằng code đọc file binary thủ công.
-    Ở đây dùng keras chỉ để lấy dữ liệu thô (raw data), không dùng cho model.
-    """
+    """Load MNIST via tensorflow if available; fallback to notebook IDX loader or mnist.npz."""
     try:
         from tensorflow.keras.datasets import mnist
         (X_train_raw, y_train), (X_test_raw, y_test) = mnist.load_data()
+        return X_train_raw, y_train, X_test_raw, y_test
     except ImportError:
-        print("Lỗi: Cần cài đặt tensorflow để tải data mẫu, hoặc tự load file mnist.npz")
+        print("TensorFlow not found; trying local IDX files via MnistDataloader.")
+    except Exception as e:
+        print(f"TensorFlow MNIST load failed: {e}; trying local IDX files.")
+
+    def _candidate_sets():
+        base_dirs = [
+            os.getenv("MNIST_IDX_DIR"),
+            os.path.join(os.getcwd(), "data"),
+            os.path.join(os.getcwd(), "input"),
+            os.path.join(os.getcwd(), "../input"),
+            os.getcwd(),
+        ]
+        # Prefer actual .idx* files, then folder-wrapped versions.
+        filename_sets = [
+            (
+                "train-images.idx3-ubyte",
+                "train-labels.idx1-ubyte",
+                "t10k-images.idx3-ubyte",
+                "t10k-labels.idx1-ubyte",
+            ),
+            (
+                "train-images-idx3-ubyte",
+                "train-labels-idx1-ubyte",
+                "t10k-images-idx3-ubyte",
+                "t10k-labels-idx1-ubyte",
+            ),
+            (
+                "train-images-idx3-ubyte/train-images-idx3-ubyte",
+                "train-labels-idx1-ubyte/train-labels-idx1-ubyte",
+                "t10k-images-idx3-ubyte/t10k-images-idx3-ubyte",
+                "t10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte",
+            ),
+        ]
+        for base in base_dirs:
+            if not base:
+                continue
+            for names in filename_sets:
+                yield {
+                    "train_images": os.path.join(base, names[0]),
+                    "train_labels": os.path.join(base, names[1]),
+                    "test_images": os.path.join(base, names[2]),
+                    "test_labels": os.path.join(base, names[3]),
+                }
+
+    chosen = None
+    for candidate in _candidate_sets():
+        if all(os.path.isfile(p) for p in candidate.values()):
+            chosen = candidate
+            break
+
+    if chosen is None:
+        print("Error: IDX files not found (set MNIST_IDX_DIR or place files under data/).")
+        local_npz = os.path.join(os.getcwd(), "mnist.npz")
+        if os.path.exists(local_npz):
+            try:
+                return load_mnist_npz(local_npz)
+            except Exception as e:
+                print(f"Error loading mnist.npz fallback: {e}")
         return None, None, None, None
 
-    return X_train_raw, y_train, X_test_raw, y_test
+    mnist_dataloader = MnistDataloader(
+        chosen["train_images"],
+        chosen["train_labels"],
+        chosen["test_images"],
+        chosen["test_labels"],
+    )
+    (x_train, y_train), (x_test, y_test) = mnist_dataloader.load_data()
+
+    return (
+        np.array(x_train, dtype=np.uint8),
+        np.array(y_train, dtype=np.uint8),
+        np.array(x_test, dtype=np.uint8),
+        np.array(y_test, dtype=np.uint8),
+    )
 
 def train_and_evaluate(feature_name, extract_func, X_raw, y, X_test_raw, y_test):
     print(f"\n{'='*10} ĐANG XỬ LÝ: {feature_name} {'='*10}")
