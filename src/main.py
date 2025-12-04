@@ -3,6 +3,7 @@ import os
 import time
 from model import SoftmaxRegression
 from features import FeatureExtractor
+from data import train_val_split
 
 # Cấu hình Hyperparameters
 CONFIG = {
@@ -40,13 +41,10 @@ def train_and_evaluate(feature_name, extract_func, X_raw, y, X_test_raw, y_test)
     print(f"    - Thời gian trích xuất: {time.time() - start_time:.2f}s")
     print(f"    - Kích thước vector đặc trưng: {X_feat.shape[1]}")
 
-    # 2. Chia tập Train/Validation thủ công
-    num_train = int(X_feat.shape[0] * (1 - CONFIG['val_split']))
-    
-    X_train_split = X_feat[:num_train]
-    y_train_split = y[:num_train]
-    X_val_split = X_feat[num_train:]
-    y_val_split = y[num_train:]
+    # 2. Chia t§-p Train/Validation th¯ cA'ng (shuffle A¤Ž`Ž-)
+    X_train_split, y_train_split, X_val_split, y_val_split = train_val_split(
+        X_feat, y, val_ratio=CONFIG['val_split'], shuffle=True, seed=42
+    )
 
     # 3. Khởi tạo Model
     model = SoftmaxRegression(
