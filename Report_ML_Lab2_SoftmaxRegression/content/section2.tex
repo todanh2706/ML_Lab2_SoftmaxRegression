@@ -42,43 +42,89 @@ Quy tắc cập nhật tham số với tốc độ học $\alpha$ (\textit{learn
     $\displaystyle W \leftarrow W - \alpha \frac{\partial J}{\partial W}$,
     $\displaystyle b \leftarrow b - \alpha \frac{\partial J}{\partial b}$.
 \end{center}
-Nhờ việc sử dụng mini-batch, quá trình tối ưu vừa duy trì sự ổn định của gradient, vừa đảm bảo hiệu năng tính toán phù hợp cho các tập dữ liệu lớn.
+Nhờ việc sử dụng mini-batch, quá trình tối ưu vừa duy trì sự ổn định của gradient, vừa đảm bảo hiệu năng tính toán phù hợp cho các tập dữ liệu lớn.\\
+Trước khi đi vào quy trình huấn luyện lặp, ta cần xác định cách khởi tạo tham số và chi tiết các bước tính toán giá trị mất mát cũng như đạo hàm tại mỗi bước lặp. Các hàm này tương ứng với phương thức \texttt{\_\_init\_\_} và \texttt{compute\_loss\_and\_grads} trong mã nguồn cài đặt.
+\begin{algorithm}[H]
+\caption{Khởi tạo và Tính toán Loss/Gradient}
+\begin{algorithmic}
+\Function{Initialize}{$n\_features, n\_classes, lr, reg$}
+    \State $self.lr \gets lr$
+    \State $self.reg \gets reg$
+    \Comment{Khởi tạo ngẫu nhiên nhỏ để phá vỡ tính đối xứng}
+    \State $W \gets 0.01 \times \mathcal{N}(0, 1, (n\_classes, n\_features))$
+    \State $b \gets \vec{0}_{n\_classes}$
+\EndFunction
 
+\Statex % Khoảng trống phân cách
+
+\Function{ComputeLossAndGrads}{$X, y$}
+    \State $N \gets \text{rows}(X)$
+    
+    \State \textbf{1. Forward Pass:}
+    \State $scores \gets X W^\top + b$
+    \State $probs \gets \text{Softmax}(scores)$ \Comment{Sử dụng max-subtraction để ổn định số học}
+    
+    \State \textbf{2. Compute Loss (Data + Regularization):}
+    \State $correct\_logprobs \gets -\log(probs[\text{range}(N), y] + \epsilon)$
+    \State $data\_loss \gets \text{Mean}(correct\_logprobs)$
+    \State $reg\_loss \gets 0.5 \cdot reg \cdot \sum(W \circ W)$
+    \State $loss \gets data\_loss + reg\_loss$
+    
+    \State \textbf{3. Backward Pass (Gradient):}
+    \State $dscores \gets probs$
+    \State $dscores[\text{range}(N), y] \gets dscores[\text{range}(N), y] - 1$
+    \State $dscores \gets dscores / N$
+    
+    \State $\nabla_W \gets dscores^\top X$
+    \If {$reg > 0$}
+        \State $\nabla_W \gets \nabla_W + reg \cdot W$
+    \EndIf
+    \State $\nabla_b \gets \text{Sum}(dscores, \text{axis}=0)$
+    
+    \State \Return $(loss, \nabla_W, \nabla_b)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Đoạn mã giả trên mô tả chi tiết hai quá trình:
+\begin{itemize}
+    \item \textbf{Initialize}: Thiết lập ma trận trọng số $W$ với các giá trị ngẫu nhiên nhỏ theo phân phối chuẩn và bias $b$ bằng 0. Việc này giúp mô hình hội tụ tốt hơn so với khởi tạo bằng 0.
+    \item \textbf{ComputeLossAndGrads}: Thực hiện tính toán xuôi (forward) để lấy xác suất dự đoán, sau đó tính toán ngược (backward) để xác định gradient. Lưu ý rằng gradient của trọng số $\nabla_W$ bao gồm cả thành phần đạo hàm từ \textit{Regularization} ($reg \cdot W$).
+\end{itemize}
 
 \subsubsection{Quy trình huấn luyện mô hình}
-
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{Hàm huấn luyện \texttt{fit}}
-\begin{algorithmic}[1]
-\Function{fit}{$X_{\text{train}}, y_{\text{train}}, X_{\text{val}}, y_{\text{val}}, \text{epochs}, \text{batch\_size}$}
-    \State $N \gets \text{rows}(X_{\text{train}})$
-    \State $\text{history.train\_loss} \gets [\,]$
-    \State $\text{history.val\_acc} \gets [\,]$
-    \For{$\text{epoch} \gets 1$ \textbf{to} $\text{epochs}$}
-        \State $\text{indices} \gets \text{RandomPermutation}(\{0,\dots,N-1\})$
-        \State $X_{\text{train}} \gets X_{\text{train}}[\text{indices}]$
-        \State $y_{\text{train}} \gets y_{\text{train}}[\text{indices}]$
-        \State $\text{epoch\_loss} \gets 0$
-        \State $\text{n\_batches} \gets 0$
-        \For{$\text{start} \gets 0$ \textbf{to} $N$ \textbf{step} $\text{batch\_size}$}
-            \State $\text{end} \gets \text{start} + \text{batch\_size}$
-            \State $X_{\text{batch}} \gets X_{\text{train}}[\text{start}:\text{end}]$
-            \State $y_{\text{batch}} \gets y_{\text{train}}[\text{start}:\text{end}]$
-            \State $(L, \nabla_W, \nabla_b) \gets \text{ComputeLossAndGrads}(X_{\text{batch}}, y_{\text{batch}})$
-            \State $\text{epoch\_loss} \gets \text{epoch\_loss} + L$
-            \State $\text{n\_batches} \gets \text{n\_batches} + 1$
-            \State $W \gets W - \text{lr} \cdot \nabla_W$
-            \State $b \gets b - \text{lr} \cdot \nabla_b$
+\begin{algorithmic}
+\Function{fit}{$X_{train}, y_{train}, X_{val}, y_{val}, epochs, batch\_size$}
+    \State $N \gets \text{rows}(X_{train})$
+    \State $history.train\_loss \gets [\,]$
+    \State $history.val\_acc \gets [\,]$
+    \For {$epoch \gets 1 \text{ to } epochs$}
+        \State $indices \gets \text{RandomPermutation}(\{0,\dots,N-1\})$
+        \State $X_{train} \gets X_{train}[indices]$
+        \State $y_{train} \gets y_{train}[indices]$
+        \State $epoch\_loss \gets 0$
+        \State $n\_batches \gets 0$
+        \For {$start \gets 0 \text{ to } N \text{ step } batch\_size$}
+            \State $end \gets start + batch\_size$
+            \State $X_{batch} \gets X_{train}[start:end]$
+            \State $y_{batch} \gets y_{train}[start:end]$
+            \State $(L, \nabla_W, \nabla_b) \gets \text{ComputeLossAndGrads}(X_{batch}, y_{batch})$
+            \State $epoch\_loss \gets epoch\_loss + L$
+            \State $n\_batches \gets n\_batches + 1$
+            \State $W \gets W - lr \cdot \nabla_W$
+            \State $b \gets b - lr \cdot \nabla_b$
         \EndFor
-        \State $\text{avg\_loss} \gets \text{epoch\_loss} / \max(\text{n\_batches}, 1)$
-        \State $\text{history.train\_loss.append}(\text{avg\_loss})$
-        \If{$X_{\text{val}} \neq \varnothing$ \textbf{and} $y_{\text{val}} \neq \varnothing$}
-            \State $\hat{y}_{\text{val}} \gets \text{Predict}(X_{\text{val}})$
-            \State $\text{val\_acc} \gets \text{Mean}(\hat{y}_{\text{val}} = y_{\text{val}})$
-            \State $\text{history.val\_acc.append}(\text{val\_acc})$
+        \State $avg\_loss \gets epoch\_loss / \max(n\_batches, 1)$
+        \State $history.train\_loss.\text{append}(avg\_loss)$
+        \If {$X_{val} \neq \varnothing \text{ and } y_{val} \neq \varnothing$}
+            \State $\hat{y}_{val} \gets \text{Predict}(X_{val})$
+            \State $val\_acc \gets \text{Mean}(\hat{y}_{val} = y_{val})$
+            \State $history.val\_acc.\text{append}(val\_acc)$
         \EndIf
     \EndFor
-    \State \Return $\text{history}$
+    \State \Return $history$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -93,17 +139,18 @@ Nhờ việc sử dụng mini-batch, quá trình tối ưu vừa duy trì sự �
 \end{itemize}
 
 \subsubsection{Quy trình suy diễn và dự đoán}
-
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{Hàm suy diễn \texttt{predict\_proba} và \texttt{predict}}
-\begin{algorithmic}[1]
+\begin{algorithmic}
 \Function{predict\_proba}{$X$}
     \State $Z \gets X W^\top + b$
     \State $Z' \gets Z - \max(Z \text{ theo từng hàng})$
-    \State $\expZ \gets \exp(Z')$
-    \State $P \gets \expZ / \sum(\expZ \text{ theo từng hàng})$
+    \State $expZ \gets \exp(Z')$
+    \State $P \gets expZ / \sum(expZ \text{ theo từng hàng})$
     \State \Return $P$
 \EndFunction
+
+\Statex
 
 \Function{predict}{$X$}
     \State $P \gets \text{predict\_proba}(X)$
@@ -112,7 +159,6 @@ Nhờ việc sử dụng mini-batch, quá trình tối ưu vừa duy trì sự �
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
-
 
 \begin{itemize}
     \item \texttt{predict\_proba}:
