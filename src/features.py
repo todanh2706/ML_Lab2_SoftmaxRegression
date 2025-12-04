@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from numpy.lib.stride_tricks import as_strided
 
 class FeatureExtractor:
     """

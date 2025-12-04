@@ -109,7 +109,7 @@ def train_and_evaluate(feature_name, extract_func, X_raw, y, X_test_raw, y_test)
     print(f"    - Thời gian trích xuất: {time.time() - start_time:.2f}s")
     print(f"    - Kích thước vector đặc trưng: {X_feat.shape[1]}")
 
-    # 2. Chia t§-p Train/Validation th¯ cA'ng (shuffle A¤Ž`Ž-)
+    # 2. Chia tập train val 
     X_train_split, y_train_split, X_val_split, y_val_split = train_val_split(
         X_feat, y, val_ratio=CONFIG['val_split'], shuffle=True, seed=42
     )
@@ -157,6 +157,7 @@ def main():
     experiments = {
         "PIXEL": FeatureExtractor.get_pixel_features,
         "BLOCK_AVG": FeatureExtractor.get_block_features,
+        # "SLIDING_BLOCK_AVG": FeatureExtractor.get_sliding_block_features,
         "EDGE": FeatureExtractor.get_edge_features  # Lưu ý: Canny chạy khá lâu
     }
 
