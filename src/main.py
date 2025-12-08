@@ -28,81 +28,42 @@ CONFIG = {
 
 
 def load_mnist_data():
-    """Load MNIST via tensorflow if available; fallback to IDX loader or mnist.npz."""
-    try:
-        from tensorflow.keras.datasets import mnist
+    """
+    Load MNIST data from local 'data' folder using MnistDataloader.
+    Requires: train-images.idx3-ubyte, train-labels.idx1-ubyte, etc.
+    """
+    # 1. Đường dẫn đến thư mục chứa data (nằm cùng cấp với main.py hoặc trong folder data)
+    # Giả sử bạn để trong folder 'data' nằm cùng cấp với main.py
+    data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
-        (X_train_raw, y_train), (X_test_raw, y_test) = mnist.load_data()
-        return X_train_raw, y_train, X_test_raw, y_test
-    except ImportError:
-        print("TensorFlow not found; trying local IDX files via MnistDataloader.")
-    except Exception as e:
-        print(f"TensorFlow MNIST load failed: {e}; trying local IDX files.")
+    # Định nghĩa tên file chuẩn
+    files = {
+        "train_images": os.path.join(data_dir, "train-images.idx3-ubyte"),
+        "train_labels": os.path.join(data_dir, "train-labels.idx1-ubyte"),
+        "test_images":  os.path.join(data_dir, "t10k-images.idx3-ubyte"),
+        "test_labels":  os.path.join(data_dir, "t10k-labels.idx1-ubyte"),
+    }
 
-    def _candidate_sets():
-        base_dirs = [
-            os.getenv("MNIST_IDX_DIR"),
-            os.path.join(os.getcwd(), "data"),
-            os.path.join(os.getcwd(), "input"),
-            os.path.join(os.getcwd(), "../input"),
-            os.getcwd(),
-        ]
-        # Prefer actual .idx* files, then folder-wrapped versions.
-        filename_sets = [
-            (
-                "train-images.idx3-ubyte",
-                "train-labels.idx1-ubyte",
-                "t10k-images.idx3-ubyte",
-                "t10k-labels.idx1-ubyte",
-            ),
-            (
-                "train-images-idx3-ubyte",
-                "train-labels-idx1-ubyte",
-                "t10k-images-idx3-ubyte",
-                "t10k-labels-idx1-ubyte",
-            ),
-            (
-                "train-images-idx3-ubyte/train-images-idx3-ubyte",
-                "train-labels-idx1-ubyte/train-labels-idx1-ubyte",
-                "t10k-images-idx3-ubyte/t10k-images-idx3-ubyte",
-                "t10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte",
-            ),
-        ]
-        for base in base_dirs:
-            if not base:
-                continue
-            for names in filename_sets:
-                yield {
-                    "train_images": os.path.join(base, names[0]),
-                    "train_labels": os.path.join(base, names[1]),
-                    "test_images": os.path.join(base, names[2]),
-                    "test_labels": os.path.join(base, names[3]),
-                }
+    # 2. Kiểm tra file tồn tại
+    for name, path in files.items():
+        if not os.path.exists(path):
+            print(f"Lỗi: Không tìm thấy file {name} tại đường dẫn: {path}")
+            print("Vui lòng tải dataset MNIST (định dạng idx) và đặt vào thư mục 'data'.")
+            return None, None, None, None
 
-    chosen = None
-    for candidate in _candidate_sets():
-        if all(os.path.isfile(p) for p in candidate.values()):
-            chosen = candidate
-            break
+    print(f"Đang tải dữ liệu từ: {data_dir} ...")
 
-    if chosen is None:
-        print("Error: IDX files not found (set MNIST_IDX_DIR or place files under data/).")
-        local_npz = os.path.join(os.getcwd(), "mnist.npz")
-        if os.path.exists(local_npz):
-            try:
-                return load_mnist_npz(local_npz)
-            except Exception as e:
-                print(f"Error loading mnist.npz fallback: {e}")
-        return None, None, None, None
-
+    # 3. Sử dụng dataLoader.py có sẵn để đọc
     mnist_dataloader = MnistDataloader(
-        chosen["train_images"],
-        chosen["train_labels"],
-        chosen["test_images"],
-        chosen["test_labels"],
+        files["train_images"],
+        files["train_labels"],
+        files["test_images"],
+        files["test_labels"],
     )
+    
     (x_train, y_train), (x_test, y_test) = mnist_dataloader.load_data()
 
+    # 4. Chuyển đổi sang Numpy array (đúng định dạng uint8 để xử lý ảnh)
     return (
         np.array(x_train, dtype=np.uint8),
         np.array(y_train, dtype=np.uint8),

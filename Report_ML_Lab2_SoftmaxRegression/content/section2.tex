@@ -118,7 +118,7 @@ Trước khi đi vào quy trình huấn luyện lặp, ta cần xác định cá
         \EndFor
         \State $avg\_loss \gets epoch\_loss / \max(n\_batches, 1)$
         \State $history.train\_loss.\text{append}(avg\_loss)$
-        \If {$X_{val} \neq \varnothing \text{ and } y_{val} \neq \varnothing$}
+        \If {$X_{val} \neq \emptyset \text{ and } y_{val} \neq \emptyset$}
             \State $\hat{y}_{val} \gets \text{Predict}(X_{val})$
             \State $val\_acc \gets \text{Mean}(\hat{y}_{val} = y_{val})$
             \State $history.val\_acc.\text{append}(val\_acc)$
