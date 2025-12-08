@@ -1,2 +1,178 @@
 \pagebreak
-\section{Thử nghiệm thiết kế thuộc tính}
+\section{Thiết kế các feature vector}
+\subsection{Feature vector 1: Đặc trưng cường độ điểm ảnh (Raw Pixel Intensity)}
+Theo \cite{lecun1998gradient}, phương pháp biểu diễn dữ liệu trực quan nhất là sử dụng trực tiếp giá trị cường độ sáng (pixel intensity) của ảnh làm vector đặc trưng. Phương pháp này, được triển khai trong hàm \texttt{get\_pixel\_features}, coi mỗi điểm ảnh là một biến độc lập, bỏ qua mối quan hệ không gian cục bộ giữa các điểm ảnh lân cận.
+\subsubsection{Biểu diễn vector hoá (Vectorization)}
+Dữ liệu gốc của bộ MNIST bao gồm các ảnh xám có kích thước $28 \times 28$ pixel. Tuy nhiên, các mô hình học máy truyền thống như Softmax Regression yêu cầu đầu vào là các vector một chiều cố định. Do đó, kỹ thuật duỗi phẳng (flattening) được áp dụng để chuyển đổi ma trận ảnh $I \in \mathbb{R}^{H \times W}$ thành vector đặc trưng $x \in \mathbb{R}^{D}$, với $D = H \times W$.\\
+Trong ngữ cảnh đồ án này:
+\begin{center}
+    $\displaystyle x = \text{flatten}(I) \in \mathbb{R}^{784}$.
+\end{center}
+Quá trình này biến đổi cấu trúc dữ liệu từ $(N, 28, 28)$ thành $(N, 784)$. Mặc dù đơn giản, cách tiếp cận này vẫn giữ lại toàn bộ thông tin gốc của ảnh và đã được Yann LeCun cùng cộng sự sử dụng làm mốc cơ sở (baseline) trong các nghiên cứu đầu tiên về MNIST.
+\subsubsection{Chuẩn hoá dữ liệu (Data Normalization)}
+Trước khi đưa vào mô hình, dữ liệu điểm ảnh thô (thường nằm trong khoảng $[0, 255]$ đối với ảnh 8-bit) cần được chuẩn hóa. Trong phương thức \texttt{\_normalize}, hệ thống thực hiện phép biến đổi tuyến tính để đưa giá trị về khoảng $[0, 1]$:
+\begin{center}
+    $\displaystyle x_{norm} = \frac{x_{raw}}{255.0}$.
+\end{center}
+Thao tác này được thực hiện bằng cách ép kiểu dữ liệu sang \texttt{float32} và chia cho $255.0$.
+Việc chuẩn hoá này đóng vai trò quan trọng trong việc tối ưu hoá mô hình Gradient Descent:
+\begin{itemize}
+    \item Đồng nhất thang đo: Giúp các đặc trưng đóng góp bình đẳng vào hàm mất mát.
+    \item Ổn định số học: Ngăn chặn hiện tượng bão hòa hoặc tràn số khi tính toán hàm mũ trong lớp Softmax.
+    \item Tăng tốc độ hội tụ: Giúp thuật toán tối ưu tìm được cực trị nhanh hơn so với dữ liệu thô chưa chuẩn hóa.
+\end{itemize}
+\subsection{Feature vector 2: Trích xuất đặc trưng biên (\textbf{Edge feature})}
+Trong khuôn khổ của hệ thống nhận dạng chữ viết tay, bên cạnh việc sử dụng trực tiếp giá trị cường độ điểm ảnh (pixel intensity), phương thức trích xuất đặc trưng thứ hai được đề xuất là khai thác thông tin cấu trúc hình học thông qua kỹ thuật phát hiện biên (Edge Detection). Kỹ thuật này được hiện thực hóa trong phương thức \texttt{get\_edge\_features} của lớp \texttt{FeatureExtractor}.
+\subsubsection{Nguyên lý toán học của thuật toán Canny \cite{canny1986computational}}
+Phương pháp này sử dụng thuật toán Canny (Canny Edge Detector), một trong những kỹ thuật phát hiện biên kinh điển và hiệu quả nhất trong xử lý ảnh. Về mặt toán học, biên của một đối tượng trong ảnh số được định nghĩa là nơi có sự thay đổi đột ngột về cường độ sáng.\\
+Thuật toán Canny hoạt động dựa trên việc tính toán đạo hàm của cường độ sáng (gradient) tại mỗi điểm ảnh. Với một đầu vào $I(x, y)$, gradient tại toạ độ $(x, y)$ được xác định bởi vector:
+\begin{center}
+    $\displaystyle \nabla I = \begin{bmatrix} G_x \\ G_y \end{bmatrix}$.
+\end{center}
+Trong đó $G_x$ và $G_y$ là đạo hàm riêng theo hướng ngang và dọc. Biên độ (magnitude) của gradient, ký hiệu là $G$, đại diện cho cường độ của biên tại điểm đó:
+\begin{center}
+    $\displaystyle G = \sqrt{G_x^2 + G_y^2}$.
+\end{center}
+\subsubsection{Kỹ thuật phân ngưỡng trễ (Hysteresis Thresholding)}
+Điểm đặc biệt trong triển khai của phương thức \texttt{get\_edge\_features} là việc áp dụng cơ chế phân ngưỡng trễ (Hysteresis Thresholding) để lọc nhiễu và xác định các đường biên thực sự. Cơ chế này sử dụng hai giá trị ngưỡng: ngưỡng dưới ($T_{min}$) và ngưỡng trên ($T_{max}$). \\
+Trong đồ án, hai tham số này được thiết lập mặc định như sau:
+\begin{itemize}
+    \item Ngưỡng dưới (\texttt{min\_val}): 100.
+    \item Ngưỡng trên (\texttt{max\_val}): 200.
+\end{itemize}
+Quy tắc lọc biên hoạt động như sau:
+\begin{itemize}
+    \item Các điểm ảnh có gradient $G \geq T_{max}$ (200) được xem là biên chắc chắn (strong edeges).
+    \item Các điểm ảnh có gradient $G < T_{min}$ (100) bị loại bỏ.
+    \item Các điểm ảnh nằm trong khoảng $T_{min} \leq G < T_{max}$ được xem là biên yếu (weak edges) và chỉ được giữ lại nếu chúng có liên kết hình học với một biên chắc chắn. Điều này giúp đảm bảo tính liên tục của các nét chữ viết tay và loại bỏ các nhiễu rời rạc.
+\end{itemize}
+\subsubsection{Quy trình tiền xử lý và biểu diễn đặc trưng}
+Trước khi áp dụng thuật toán Canny, dữ liệu ảnh đầu vào được chuyển đổi sang định dạng \texttt{uint8} (số nguyên 8-bit không dấu) để tương thích với thư viện OpenCV:
+\begin{center}
+    $\displaystyle I_{uint8} = \text{cast}(I_{raw}, \text{uint8})$.
+\end{center}
+Việc chuyển đổi này được thực hiện trong vòng lặp xử lý từng mẫu dữ liệu $i$ thông qua lệnh \texttt{images[i].astype(np.uint8)}.\\
+Kết quả đầu ra của bộ phát hiện biên là một ma trận nhị phân biểu thị vị trí các nét vẽ. Để đồng nhất với đầu vào của mô hình Softmax Regression, ma trận này được chuẩn hoá về khoảng $[0, 1]$ và duỗi phẳng (flatten) thành một vector đặc trưng $x \in \mathbb{R}^{784}$:
+\begin{center}
+    $\displaystyle x_{edge} = \text{flatten}\left( \frac{\text{Canny}(I_{uint8})}{255.0} \right)$.
+\end{center}
+Quy trình này đảm bảo mỗi ảnh được biểu diễn bởi một vector đặc trưng có kích thước $(N, 784)$, trong đó các giá trị khác 0 đại diện cho cấu trúc hình học của chữ số.
+\subsubsection{Ý nghĩa}
+Việc sử dụng đặc trưng biên giúp mô hình tập trung vào hình dáng và cấu trúc tô pô của chữ số thay vì phụ thuộc vào độ nhạt của nét bút (vốn có thể thay đổi tuỳ thuộc vào người viết hoặc dụng cụ viết). Đây là một bước trích xuất đặc trưng bậc cao giúp tăng cường khả năng bất biến của mô hình đối với các biến thể về độ sáng của ảnh đầu vào.
+\subsection{Feature vector 3: Giảm dimension bằng block averaging}
+
+\paragraph{Ý tưởng chính:}
+Ở hai thiết kế trước đó, mô hình Softmax Regression làm việc trực tiếp với tập dữ liệu, dẫn đến việc vector đặc trưng có số chiều khá lớn, khiến quá trình huấn luyện chậm hơn và mô hình dễ bị ảnh hưởng bởi nhiễu.
+
+Vì vậy, feature vector thứ ba (\textbf{Block Averaging}) được giới thiệu nhằm giải quyết vấn đề này bằng cách thay thế 1 block với dimension cho trước (vd: $4 \times 4$) thành 1 giá trị duy nhất là trung bình của các pixel trong block này. 
+
+\paragraph{Cơ chế chuyển đổi ảnh $\mathbf{28 \times 28}$ thành vector đặc trưng.}
+
+\begin{enumerate}
+    \item Chia ảnh $28 \times 28$ thành các block con không chồng lắp có kích thước cố định, ví dụ $4 \times 4$.
+    \item Mỗi block được rút gọn thành một giá trị duy nhất bằng cách tính trung bình cường độ sáng của các pixel trong block đó.
+    \item Các giá trị trung bình của các block con được xếp lại theo thứ tự của block $4 \times 4$ cha, tạo thành một vector đặc trưng có số chiều nhỏ hơn rất nhiều so với vector pixel gốc.
+\end{enumerate}
+
+Cụ thể, với ảnh MNIST kích thước $28 \times 28$ và kích thước block $(b_h, b_w) = (4, 4)$:
+\begin{itemize}
+    \item Chiều cao ảnh: $H = 28$, chiều rộng ảnh: $W = 28$;
+    \item Số block theo chiều dọc: $H' = \frac{H}{b_h} = \frac{28}{4} = 7$;
+    \item Số block theo chiều ngang: $W' = \frac{W}{b_w} = \frac{28}{4} = 7$;
+    \item Tổng số block: $H' \cdot W' = 7 \cdot 7 = 49$.
+\end{itemize}
+Sau bước Block Averaging, mỗi ảnh được biểu diễn bằng vector $7 \times 7$ (thay vì $28 \times 28$).
+
+\paragraph{Biểu diễn toán học.}
+
+Ký hiệu ảnh đã chuẩn hoá (chia cho $255$) là ma trận $X \in [0,1]^{28 \times 28}$. Với kích thước block $(b_h, b_w)$, ta định nghĩa ma trận đặc trưng sau khi khử chiều là $F \in \mathbb{R}^{H' \times W'}$, với:
+\[
+H' = \frac{H}{b_h}, \quad W' = \frac{W}{b_w}.
+\]
+
+Phần tử $F_{r,c}$ (block ở hàng $r$, cột $c$) được tính bằng trung bình cường độ sáng trên block tương ứng của ảnh gốc:
+\begin{equation}
+    F_{r,c} = \frac{1}{b_h \cdot b_w} 
+    \sum_{i=0}^{b_h - 1}
+    \sum_{j=0}^{b_w - 1}
+    X_{\,r \cdot b_h + i,\; c \cdot b_w + j},
+    \quad
+    0 \le r < H',\;
+    0 \le c < W'.
+\end{equation}
+
+Cuối cùng, ta vector hoá ma trận $F$ theo thứ tự hàng–cột:
+\[
+\phi_{\text{block}}(X) = \operatorname{vec}(F) \in \mathbb{R}^{H' \cdot W'}.
+\]
+Trong thực nghiệm với $(b_h, b_w) = (4,4)$, ta có:
+\[
+\phi_{\text{block}}(X) \in \mathbb{R}^{49}.
+\]
+
+\paragraph{Quy trình trích xuất đặc trưng trong code:}
+
+
+\begin{enumerate}
+    \item \textbf{Chuẩn hoá}: chuyển ảnh từ kiểu \texttt{uint8} về \texttt{float32} và chia cho $255$ để đưa cường độ pixel về khoảng $[0,1]$:
+    \[
+        X_{\text{norm}} = \frac{X}{255}.
+    \]
+    \item \textbf{Reshape để gom block}: với $N$ ảnh đầu vào có dạng $(N, 28, 28)$, ta reshape thành dạng:
+    \[
+        (N, H', b_h, W', b_w) = (N, 7, 4, 7, 4),
+    \]
+    sao cho mỗi ``ô'' $(r,c)$ tương ứng đúng một block $4 \times 4$ của ảnh ban đầu.
+    \item \textbf{Trung bình theo block}: tính trung bình trên hai trục ứng với kích thước block $(b_h, b_w)$ để thu được tensor dạng:
+    \[
+        (N, H', W') = (N, 7, 7).
+    \]
+    \item \textbf{vector hoá}: flatten từng ma trận $7 \times 7$ về vector chiều $49$ để đưa vào mô hình Softmax Regression.
+\end{enumerate}
+
+Trong mã nguồn, các bước này tương ứng với hàm:
+\begin{center}
+    \texttt{FeatureExtractor.get\_block\_features(images, block\_size=(4,4))}
+\end{center}
+trả về mảng NumPy kích thước $(N, 49)$.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/block_feature_demo.png}
+    \caption{
+        Quy trình trích xuất đặc trưng Block Averaging: 
+        từ ảnh chữ số gốc $28 \times 28$  
+        sang ảnh đã được khử chiều $7 \times 7$  
+        và vector đặc trưng chiều $49$.
+    }
+    \label{fig:block_avg_demo}
+\end{figure}
+
+\paragraph{Đánh giá sơ bộ về ưu nhược điểm trước khi train}
+
+\begin{itemize}
+    \item \textbf{Ưu điểm:}
+    \begin{itemize}
+        \item Giảm số chiều đặc trưng rất mạnh (từ $784$ xuống $49$), qua đó:
+        \begin{itemize}
+            \item Mô hình Softmax Regression có ít tham số hơn, huấn luyện nhanh hơn
+            \item Giảm nguy cơ overfitting trên những nhiễu rất cục bộ.
+        \end{itemize}
+        \item Giữ lại được cấu trúc tổng thể của chữ số: các vùng pixel ``sáng'' (nét chữ) khi được trung bình hoá vẫn tạo thành hình dạng gần giống chữ số ban đầu ở cấp độ thô.
+        \item Trung bình hoá trong block hoạt động như một bộ lọc thông thấp (low-pass filter), làm trơn các biến thiên nhỏ trong block và giúp mô hình ít nhạy với nhiễu.
+    \end{itemize}
+    \item \textbf{Nhược điểm:}
+    \begin{itemize}
+        \item Mất đi nhiều chi tiết quan trọng, đặc biệt là các nét mảnh hoặc cấu trúc tinh tế giúp phân biệt những cặp chữ số khó như $(3,5)$, $(5,8)$, $(4,9)$, \dots
+        \item Do block không chồng lắp, các đường biên rơi đúng ranh giới block có thể bị ``bóp méo'' nhiều hơn, làm giảm khả năng phân biệt dựa trên hình dạng chính xác.
+        \item Khi chỉ nhìn ở độ phân giải $7 \times 7$, một số chữ số khác nhau có thể trở nên khá giống nhau về mặt phân bố cường độ trung bình, khiến ranh giới quyết định tuyến tính của Softmax Regression khó phân tách hoàn toàn.
+    \end{itemize}
+\end{itemize}
+
+% Từ các lập luận trên, ta kỳ vọng rằng:
+% \begin{itemize}
+%     \item Đặc trưng Block Averaging sẽ cho \emph{độ chính xác thấp hơn đặc trưng pixel chuẩn hoá}, do thông tin chi tiết bị nén lại quá mạnh;
+%     \item Tuy nhiên, mô hình sẽ huấn luyện nhanh hơn, ổn định hơn, và vẫn đạt được độ chính xác ở mức chấp nhận được cho bài toán nhận dạng chữ số viết tay;
+%     \item Sự khác biệt về hiệu năng giữa Block Averaging và các đặc trưng khác (pixel, cạnh, \dots) sẽ thể hiện rõ trong các chỉ số như Accuracy, F1-score và ma trận nhầm lẫn, được phân tích chi tiết ở phần \emph{Đánh giá và phân tích kết quả}.
+% \end{itemize}
