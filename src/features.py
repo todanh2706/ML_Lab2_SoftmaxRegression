@@ -1,5 +1,5 @@
 import numpy as np
-import cv2
+from PIL import Image, ImageFilter
 from numpy.lib.stride_tricks import as_strided
 
 class FeatureExtractor:
@@ -48,18 +48,15 @@ class FeatureExtractor:
         n_samples = images.shape[0]
         edges_list = []
 
-        # OpenCV Canny works on single channel 8-bit images
-        # We iterate because cv2.Canny expects single image input usually
+        # Edge Detection using PIL
         for i in range(n_samples):
-            # Ensure image is uint8 for OpenCV
             img_uint8 = images[i].astype(np.uint8)
-            
-            # Detect edges
-            edge_img = cv2.Canny(img_uint8, min_val, max_val)
+            pil_img = Image.fromarray(img_uint8)
+            edge_img = pil_img.filter(ImageFilter.FIND_EDGES)
             
             # Normalize to 0-1
-            edge_norm = edge_img.astype(np.float32) / 255.0
-            edges_list.append(edge_norm.flatten())
+            edge_arr = np.array(edge_img).astype(np.float32) / 255.0
+            edges_list.append(edge_arr.flatten())
 
         return np.array(edges_list)
 
