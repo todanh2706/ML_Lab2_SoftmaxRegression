@@ -75,7 +75,7 @@ Trong phần này, ta phân tích mức độ nhầm lẫn giữa các lớp d�
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{img/confusion_matrix_pixel_norm.png}
-\caption{Confusion matrix chuẩn hoá – Feature PIXEL}
+\caption{Confusion matrix chuẩn hoá - Feature PIXEL}
 \label{fig:cm_pixel}
 \end{figure}
 
@@ -90,37 +90,33 @@ Mô hình với PIXEL cho thấy đường chéo chính rất đậm:
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{img/confusion_matrix_block_avg_norm.png}
-\caption{Confusion matrix chuẩn hoá – Feature BLOCK\_AVG}
+\caption{Confusion matrix chuẩn hoá - Feature BLOCK\_AVG}
 \label{fig:cm_block_avg}
 \end{figure}
 
 BLOCK\_AVG có mức nhầm lẫn cao hơn đáng kể:
 \begin{itemize}
     \item Lớp 5 bị nhầm sang lớp 3 khoảng 6\%.
-    \item Lớp 8 bị nhầm với 3, 5 và 9 (2–4\%).
+    \item Lớp 8 bị nhầm với 1, 3, và 5 (2-4\%).
 \end{itemize}
 
-=> Khi giảm ảnh xuống 7$\times$7, mô hình mất khả năng phân tách các lớp có cấu trúc tương tự.  
-=> Tương tự như Lasso trong ví dụ mẫu, BLOCK\_AVG là feature “yếu nhất”.
+=> Khi giảm ảnh xuống 7$\times$7, mô hình mắc nhiều sai sót hơn khi phân tách các lớp có cấu trúc tương tự.  
 
 \subsubsection*{EDGE}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{img/confusion_matrix_edge_norm.png}
-\caption{Confusion matrix chuẩn hoá – Feature EDGE}
+\caption{Confusion matrix chuẩn hoá - Feature EDGE}
 \label{fig:cm_edge}
 \end{figure}
 
-EDGE thể hiện mức độ phân biệt khá tốt:
 \begin{itemize}
-    \item Các lớp có hình dạng rõ ràng như 0, 1, 7 được dự đoán chính xác cao.
-    \item Tuy nhiên, các chữ số dựa nhiều vào chi tiết bên trong (5, 8, 9) có tỷ lệ nhầm lẫn lớn hơn.
+    \item Các lớp có hình dạng rõ ràng như 0, 1, 6 được dự đoán chính xác cao.
+    \item Tuy nhiên, tương tự như BLOCK\_AVG, EDGE cũng bị nhầm lẫn khi xác định các số còn lại, đặc biệt là 5 và 8.
 \end{itemize}
 
 => EDGE tốt hơn BLOCK\_AVG nhưng chưa vượt được PIXEL vì thiếu thông tin cường độ pixel.
-
-\subsection{Tổng kết và kết luận}
 
 Từ toàn bộ số liệu và biểu đồ trên, ta có thể rút ra:
 
@@ -131,6 +127,3 @@ Từ toàn bộ số liệu và biểu đồ trên, ta có thể rút ra:
 \end{itemize}
 
 => Mặc dù BLOCK\_AVG và EDGE có thể giúp giảm số chiều và thời gian xử lý, chúng làm giảm đáng kể khả năng phân loại của Softmax Regression.
-
-=> Tương tự cách Linear Regression với BIC vượt trội trong ví dụ mẫu, ở đây \textbf{PIXEL là lựa chọn tối ưu để huấn luyện Softmax Regression} trên bài toán nhận dạng chữ số.
-
