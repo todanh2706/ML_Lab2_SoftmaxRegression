@@ -1,2 +1,54 @@
 \pagebreak
 \section{Mô tả và tiền xử lý dữ liệu}
+\subsection{Mô tả dữ liệu}
+Hệ thống được xây dựng để vận hành trên bộ cơ sở dữ liệu MNIST, một tập dữ liệu chuẩn mực trong lĩnh vực thị giác máy tính bao gồm các hình ảnh chữ số viết tay. Dữ liệu được tổ chức lưu trữ cục bộ trong thư mục \texttt{data} và được truy xuất thông qua các đường dẫn tệp tĩnh được định nghĩa trong cấu hình hệ thống.
+\subsubsection{Cấu trúc tập tin}
+Bộ dữ liệu bao gồm bốn tệp nhị phân riêng biệt theo định dạng IDX, tương ứng với hai tập dữ liệu con: tập huấn luyện (training set) và tập kiểm thử (test set). Cụ thể bao gồm:
+\begin{itemize}
+    \item \textbf{Tập huấn luyện (train):} Bao gồm tệp hình ảnh (\texttt{train-images.idx3-ubyte}) và tệp nhãn tương ứng (\texttt{train-labels.idx1-ubyte}).
+    \item \textbf{Tập kiểm thử (test):} Bao gồm tệp hình ảnh (\texttt{t10k-images.idx3-ubyte}) và tệp nhãn tương ứng (\texttt{t10k-labels.idx1-ubyte}).
+\end{itemize}
+\subsubsection{Định dạng nội tại và Metadata (Internal Format and Metadata)}
+Dữ liệu không được lưu trữ dưới dạng các tệp ảnh thông thường (như PNG hay JPEG) mà dưới dạng chuỗi byte (byte stream). Quá trình đọc dữ liệu được thực hiện bằng cách giải mã (unpack) cấu trúc nhị phân của tệp header:
+\begin{itemize}
+    \item \textbf{Số định danh (Magic Number):} Mỗi tệp bắt đầu bằng 4 byte đầu tiên chứa "magic number" để xác thực định dạng. Hệ thống kiểm tra giá trị này để đảm bảo tính toàn vẹn: giá trị 2049 xác định tệp chứa nhãn và giá trị 2051 xác định tệp chứa dữ liệu hình ảnh.
+    \item \textbf{Thông tin kích thước:} Ngay sau magic number, header cung cấp thông tin về số lượng mẫu (size), số hàng (rows) và số cột (cols). Các thông số này được đọc thông qua module \texttt{struct} để thiết lập kích thước mảng dữ liệu chính xác.
+\end{itemize}
+\subsubsection{Đặc tả chi tiết dữ liệu}
+Sau khi giải mã, dữ liệu được chuyển đổi thành các cấu trúc đại số tuyến tính để phục vụ tính toán:
+\begin{itemize}
+    \item \textbf{Dữ liệu hình ảnh (Image Data):}
+    \begin{itemize}
+        \item \textbf{Kích thước gốc:} Mỗi mẫu dữ liệu thô sau khi đọc được tái cấu trúc (reshape) thành một ma trận hai chiều với kích thước cố định là $28 \times 28$ pixel.
+        \item \textbf{Kiểu dữ liệu:} Trong quá trình nạp vào bộ nhớ chính (RAM), các ma trận này được ép kiểu sang định dạng \texttt{numpy.uint8} (số nguyên không dấu 8-bit). Điều này đồng nghĩa mỗi điểm ảnh (pixel) mang một giá trị nguyên nằm trong khoảng $[0, 255]$, đại diện cho độ đậm nhạt của nét viết.
+    \end{itemize}
+    \item \textbf{Dữ liệu nhãn (Label Data):}
+    \begin{itemize}
+        \item Chứa các giá trị số nguyên tương ứng với chữ số trong hình ảnh.
+        \item Hệ thống được cấu hình tham số \texttt{n\_classes = 10}, xác định không gian đầu ra bao gồm 10 lớp phân loại (tương ứng các chữ số từ 0 đến 9).
+    \end{itemize}
+\end{itemize}
+\subsection{Tiền xử lý dữ liệu}
+Quy trình xử lý dữ liệu được thiết kế theo mô hình đường ống (pipeline), bắt đầu từ việc đọc dữ liệu nhị phân thô, chuẩn hóa, trích xuất đặc trưng và cuối cùng là phân chia tập dữ liệu để phục vụ việc huấn luyện mô hình hồi quy Softmax.
+\subsubsection{Thu thập và đọc dữ liệu thô (Data Loading)}
+Dữ liệu đầu vào là bộ dataset MNIST được lưu trữ dưới định dạng tệp nhị phân IDX. Module \texttt{MnistDataloader} chịu trách nhiệm đọc và giải mã các tệp này.
+\begin{itemize}
+    \item \textbf{Kiểm tra tính toàn vẹn:} Quá trình đọc tệp sử dụng thư viện \texttt{struct} để giải mã phần header. Hệ thống thực hiện kiểm tra "magic number" (số định danh tệp) để đảm bảo tính hợp lệ của dữ liệu: giá trị 2049 đối với tệp nhãn (label) và 2051 đối với tệp hình ảnh.
+    \item \textbf{Định dạng dữ liệu ban đầu:} Dữ liệu hình ảnh được đọc dưới dạng mảng byte liên tục, sau đó được tái cấu trúc (reshape) thành các ma trận kích thước $28 \times 28$ pixel.
+    \item \textbf{Chuyển đổi dữ liệu:} Tại hàm \texttt{load\_mnist\_data}, dữ liệu thô được chuyển đổi sang định dạng \texttt{numpy.array} với kiểu dữ liệu \texttt{uint8} (số nguyên không dấu 8-bit) nhằm tối ưu hóa bộ nhớ lưu trữ trước khi bước vào giai đoạn xử lý đặc trưng.
+\end{itemize}
+\subsubsection{Chuẩn hoá và trích xuất đặc trưng (Feature Extraction)}
+Giai đoạn này được thực hiện bởi lớp \texttt{FeatureExtractor}, bao gồm bước chuẩn hóa chung và ba chiến lược trích xuất đặc trưng riêng biệt nhằm đa dạng hóa đầu vào cho mô hình.\\
+\textbf{Chuẩn hoá dữ liệu (Normalization):} Trước khi áp dụng bất kỳ thuật toán trích xuất nào, phương thức \texttt{\_normalize} được áp dụng để chuyển đổi giá trị pixel từ thang đo số nguyên $[0, 255]$ sang thang đo số thực $[0.0, 1.0]$. Phép toán này sử dụng kiểu dữ liệu float32 để đảm bảo độ chính xác tính toán.\\
+\textbf{Các chiến lược trích xuất đặc trưng:} Hệ thống triển khai ba phương pháp trích xuất đặc trưng chính:
+\begin{itemize}
+    \item \textbf{Đặc trưng điểm ảnh (Pixel Features):} Phương thức \texttt{get\_pixel\_features} thực hiện duỗi phẳng (flatten) ma trận ảnh $28 \times 28$ thành vector đặc trưng một chiều có kích thước 784 ($N \times 784$). Đây là phương pháp giữ nguyên toàn bộ thông tin gốc của ảnh.
+    \item \textbf{Đặc trưng biên dạng (Edge Detection Features):} Phương thức \texttt{get\_edge\_features} sử dụng thuật toán Canny (thông qua thư viện OpenCV) để phát hiện các cạnh của chữ số. Các ngưỡng (threshold) được thiết lập với \texttt{min\_val=100} và \texttt{max\_val=200}. Kết quả là các vector đặc trưng đại diện cho cấu trúc hình học của chữ số, loại bỏ các chi tiết nền không cần thiết.
+    \item \textbf{Đặc trưng trung bình khối (Block Averaging Features):} Phương thức \texttt{get\_block\_features} thực hiện giảm chiều dữ liệu bằng kỹ thuật gộp (pooling). Ảnh được chia thành các khối kích thước $4 \times 4$ không chồng lấn, sau đó tính giá trị trung bình cho từng khối. Kỹ thuật này giảm kích thước vector đặc trưng từ 784 xuống còn 49 ($N \times 49$), giúp giảm tải tính toán.
+\end{itemize}
+\subsubsection{Phân chia dữ liệu (Data Splitting)}
+Sau khi trích xuất đặc trưng, dữ liệu được phân chia thành tập huấn luyện (training set) và tập kiểm định (validation set) thông qua hàm \texttt{train\_val\_split}.
+\begin{itemize}
+    \item \textbf{Xáo trộn ngẫu nhiên (Shuffling):} Để đảm bảo tính khách quan và tránh hiện tượng mô hình học thuộc thứ tự dữ liệu, chỉ số dữ liệu được xáo trộn ngẫu nhiên với một \texttt{seed} cố định (42) nhằm đảm bảo kết quả có thể tái lập.
+    \item \textbf{Tỷ lệ phân chia:} Dựa trên cấu hình hệ thống (\texttt{CONFIG}), 10\% dữ liệu từ tập huấn luyện gốc được tách ra để làm tập kiểm định (\texttt{val\_split}: 0.1), phục vụ việc đánh giá chéo trong quá trình huấn luyện.
+\end{itemize}
