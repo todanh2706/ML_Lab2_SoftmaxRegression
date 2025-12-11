@@ -10,20 +10,20 @@ from sklearn.metrics import (
     classification_report,
 )
 
-from utils.model import SoftmaxRegression           # Đổi lại nếu file tên khác
+from utils.model import SoftmaxRegression
 from utils.features import FeatureExtractor
 from utils.data import train_val_split, load_mnist_npz
 from utils.dataLoader import MnistDataloader
 
 
-# Cấu hình Hyperparameters
+# Hyperparameters setting
 CONFIG = {
     "lr": 0.1,
     "reg": 1e-4,
     "epochs": 20,
     "batch_size": 128,
     "n_classes": 10,
-    "val_split": 0.1,  # 10% tập train dùng để validate
+    "val_split": 0.1,
 }
 
 
@@ -32,11 +32,10 @@ def load_mnist_data():
     Load MNIST data from local 'data' folder using MnistDataloader.
     Requires: train-images.idx3-ubyte, train-labels.idx1-ubyte, etc.
     """
-    # 1. Đường dẫn đến thư mục chứa data (nằm cùng cấp với main.py hoặc trong folder data)
-    # Giả sử bạn để trong folder 'data' nằm cùng cấp với main.py
+    # The directory to data folder
     data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
-    # Định nghĩa tên file chuẩn
+    # Define the output filename
     files = {
         "train_images": os.path.join(data_dir, "train-images.idx3-ubyte"),
         "train_labels": os.path.join(data_dir, "train-labels.idx1-ubyte"),
@@ -44,7 +43,7 @@ def load_mnist_data():
         "test_labels":  os.path.join(data_dir, "t10k-labels.idx1-ubyte"),
     }
 
-    # 2. Kiểm tra file tồn tại
+    # Check the exist file
     for name, path in files.items():
         if not os.path.exists(path):
             print(f"Lỗi: Không tìm thấy file {name} tại đường dẫn: {path}")
@@ -53,7 +52,7 @@ def load_mnist_data():
 
     print(f"Đang tải dữ liệu từ: {data_dir} ...")
 
-    # 3. Sử dụng dataLoader.py có sẵn để đọc
+    # Use dataLoader.py to reda
     mnist_dataloader = MnistDataloader(
         files["train_images"],
         files["train_labels"],
@@ -63,7 +62,7 @@ def load_mnist_data():
     
     (x_train, y_train), (x_test, y_test) = mnist_dataloader.load_data()
 
-    # 4. Chuyển đổi sang Numpy array (đúng định dạng uint8 để xử lý ảnh)
+    # Transfer to numpy array.
     return (
         np.array(x_train, dtype=np.uint8),
         np.array(y_train, dtype=np.uint8),
@@ -73,7 +72,7 @@ def load_mnist_data():
 
 def plot_metric_bars(results, metric_key, ylabel, title, filename):
     """
-    Vẽ bar chart cho 1 metric: Accuracy, Macro F1, Macro Precision, Macro Recall.
+    Bar chart for 1 metric: Accuracy, Macro F1, Macro Precision, Macro Recall.
     results: dict { feature: {metric: value, ...} }
     """
     features = list(results.keys())
@@ -92,12 +91,12 @@ def plot_metric_bars(results, metric_key, ylabel, title, filename):
     plt.tight_layout()
     plt.savefig(filename, dpi=150)
     plt.close()
-    print(f"[*] Đã lưu biểu đồ: {filename}")
+    print(f"[*] Stored the chart: {filename}")
 
 
 def plot_multi_metric(results, filename="comparison_all_metrics.png"):
     """
-    Vẽ một biểu đồ cột nhóm, so sánh Accuracy – Precision – Recall – F1.
+    Draw the grouped column chart, compare the Accuracy – Precision – Recall – F1.
     """
     features = list(results.keys())
 
@@ -116,13 +115,13 @@ def plot_multi_metric(results, filename="comparison_all_metrics.png"):
     plt.bar(x + 1.5*width, f1, width, label="F1-score")
 
     plt.xticks(x, features)
-    plt.title("So sánh tổng quát giữa các Feature")
+    plt.title("Compare Feature with each other")
     plt.ylabel("Score")
     plt.ylim(0.8, 1)
     plt.grid(axis="y", linestyle="--", alpha=0.5)
     plt.legend()
 
-    # In giá trị lên đầu cột
+    # Print the value to the top of column
     def annotate(values, shift):
         for xx, val in zip(x + shift, values):
             plt.text(xx, val + 0.003, f"{val:.3f}", ha='center', fontsize=8)
@@ -135,16 +134,16 @@ def plot_multi_metric(results, filename="comparison_all_metrics.png"):
     plt.tight_layout()
     plt.savefig(filename, dpi=150)
     plt.close()
-    print(f"[*] Đã lưu biểu đồ: {filename}")
+    print(f"[*] Stored the chart: {filename}")
 
 
 def plot_confusion_matrix(cm, classes, feature_name, normalize=False):
     """
-    Vẽ và lưu confusion matrix thành file png.
+    Draw and store confusion matrix to png file.
     cm: confusion_matrix (ndarray)
-    classes: list các nhãn (vd [0,1,2,...,9])
-    feature_name: tên loại feature (PIXEL, BLOCK_AVG, ...)
-    normalize: nếu True thì normalize theo hàng.
+    classes: labels list (vd [0,1,2,...,9])
+    feature_name: name of feature (PIXEL, BLOCK_AVG, ...)
+    normalize: normalize by row if true.
     """
     if normalize:
         cm_sum = cm.sum(axis=1, keepdims=True)
@@ -179,31 +178,31 @@ def plot_confusion_matrix(cm, classes, feature_name, normalize=False):
     plt.xlabel("Predicted label")
     plt.tight_layout()
 
-    # Lưu file
+    # Store file
     fname = f"confusion_matrix_{feature_name.lower()}.png"
     plt.savefig(fname, dpi=150)
     plt.close()
-    print(f"    -> Đã lưu confusion matrix tại: {fname}")
+    print(f"Stored confusion matrix: {fname}")
 
 
 def evaluate_classification(y_true, y_pred, n_classes, feature_name):
     """
-    Tính các metric classification + in báo cáo.
-    Trả về dict chứa metric summary để so sánh giữa các feature.
+    Calculate metric classifications and print report.
+    Return the dict that includes metric summary for features comparison.
     """
     labels = np.arange(n_classes)
 
     # Accuracy
     acc = accuracy_score(y_true, y_pred)
 
-    # Precision, Recall, F1 theo từng lớp
+    # Precision, Recall, F1
     precision_per_cls, recall_per_cls, f1_per_cls, support_per_cls = (
         precision_recall_fscore_support(
             y_true, y_pred, labels=labels, average=None, zero_division=0
         )
     )
 
-    # Macro-average (trung bình đều các lớp)
+    # Macro-average
     macro_precision, macro_recall, macro_f1, _ = precision_recall_fscore_support(
         y_true, y_pred, labels=labels, average="macro", zero_division=0
     )
@@ -211,17 +210,17 @@ def evaluate_classification(y_true, y_pred, n_classes, feature_name):
     # Confusion matrix
     cm = confusion_matrix(y_true, y_pred, labels=labels)
 
-    print("\n================= ĐÁNH GIÁ CHI TIẾT =================")
+    print("\n================= DETAILED EVALUATION =================")
     print(f"Feature: {feature_name}")
     print(f"- Accuracy: {acc:.4f}")
     print(f"- Macro Precision: {macro_precision:.4f}")
     print(f"- Macro Recall:    {macro_recall:.4f}")
     print(f"- Macro F1-score:  {macro_f1:.4f}")
 
-    print("\n--- Precision / Recall / F1 theo từng lớp ---")
+    print("\n--- Precision / Recall / F1 ---")
     for idx, cls in enumerate(labels):
         print(
-            f"  Lớp {cls}: "
+            f"Class {cls}: "
             f"Precision={precision_per_cls[idx]:.4f}, "
             f"Recall={recall_per_cls[idx]:.4f}, "
             f"F1={f1_per_cls[idx]:.4f}, "
@@ -235,7 +234,7 @@ def evaluate_classification(y_true, y_pred, n_classes, feature_name):
         )
     )
 
-    # Vẽ + lưu confusion matrix (raw và normalized)
+    # Draw and store confusion matrix
     print("\n--- Confusion matrix (raw) ---")
     plot_confusion_matrix(cm, classes=labels, feature_name=feature_name, normalize=False)
     print("\n--- Confusion matrix (normalized theo hàng) ---")
@@ -243,7 +242,7 @@ def evaluate_classification(y_true, y_pred, n_classes, feature_name):
         cm, classes=labels, feature_name=feature_name + "_norm", normalize=True
     )
 
-    # Dict để dùng sau ở phần tổng kết / so sánh
+    # Dict
     metrics_summary = {
         "accuracy": acc,
         "macro_precision": macro_precision,
@@ -254,22 +253,22 @@ def evaluate_classification(y_true, y_pred, n_classes, feature_name):
 
 
 def train_and_evaluate(feature_name, extract_func, X_raw, y, X_test_raw, y_test):
-    print(f"\n{'=' * 10} ĐANG XỬ LÝ: {feature_name} {'=' * 10}")
+    print(f"\n{'=' * 10} PROCESSING: {feature_name} {'=' * 10}")
 
-    # 1. Trích xuất đặc trưng
-    print(f"[*] Đang trích xuất đặc trưng (Feature Extraction)...")
+    # Extract the features
+    print(f"[*] Extracting features...")
     start_time = time.time()
     X_feat = extract_func(X_raw)
     X_test_feat = extract_func(X_test_raw)
-    print(f"    - Thời gian trích xuất: {time.time() - start_time:.2f}s")
-    print(f"    - Kích thước vector đặc trưng: {X_feat.shape[1]}")
+    print(f"- Extraction time {time.time() - start_time:.2f}s")
+    print(f"- Feature vector size: {X_feat.shape[1]}")
 
-    # 2. Chia tập train/val
+    # Train/Val split
     X_train_split, y_train_split, X_val_split, y_val_split = train_val_split(
         X_feat, y, val_ratio=CONFIG["val_split"], shuffle=True, seed=42
     )
 
-    # 3. Khởi tạo Model
+    # Initialize the model
     model = SoftmaxRegression(
         n_features=X_feat.shape[1],
         n_classes=CONFIG["n_classes"],
@@ -277,8 +276,8 @@ def train_and_evaluate(feature_name, extract_func, X_raw, y, X_test_raw, y_test)
         reg=CONFIG["reg"],
     )
 
-    # 4. Huấn luyện (Training)
-    print(f"[*] Bắt đầu training trong {CONFIG['epochs']} epochs...")
+    # Train
+    print(f"[*] Training by {CONFIG['epochs']} epochs...")
     history = model.fit(
         X_train_split,
         y_train_split,
@@ -289,7 +288,7 @@ def train_and_evaluate(feature_name, extract_func, X_raw, y, X_test_raw, y_test)
         verbose=True,
     )
 
-    # 5. Đánh giá trên tập Test với các metric đầy đủ
+    # Evaluate on the test set
     y_pred_test = model.predict(X_test_feat)
     test_metrics = evaluate_classification(
         y_true=y_test,
@@ -298,34 +297,33 @@ def train_and_evaluate(feature_name, extract_func, X_raw, y, X_test_raw, y_test)
         feature_name=feature_name,
     )
 
-    # 6. Lưu Model
+    # Store the model
     save_path = f"model_{feature_name.lower()}.npz"
     model.save(save_path)
-    print(f"[*] Đã lưu model tại: {save_path}")
+    print(f"[*] Stored model at: {save_path}")
 
-    # Trả về metrics + final train loss (để tiện log)
+    # Return metrics + final train loss 
     return test_metrics, history["train_loss"][-1]
 
 
 def main():
-    # 1. Load dữ liệu thô
-    print("Đang tải dữ liệu MNIST...")
+    # Data loading
+    print("Loading data from MNIST...")
     X_train_raw, y_train, X_test_raw, y_test = load_mnist_data()
 
     if X_train_raw is None:
         return
 
-    # Danh sách các loại đặc trưng cần thí nghiệm
+    # Features list
     experiments = {
         "PIXEL": FeatureExtractor.get_pixel_features,
         "BLOCK_AVG": FeatureExtractor.get_block_features,
-        # "SLIDING_BLOCK_AVG": FeatureExtractor.get_sliding_block_features,
-        "EDGE": FeatureExtractor.get_edge_features,  # Lưu ý: Canny chạy khá lâu
+        "EDGE": FeatureExtractor.get_edge_features,
     }
 
     results = {}
 
-    # Vòng lặp chạy thí nghiệm
+    # Experiment iteration
     for name, func in experiments.items():
         metrics, final_loss = train_and_evaluate(
             name, func, X_train_raw, y_train, X_test_raw, y_test
@@ -338,9 +336,9 @@ def main():
             "Final_Loss": final_loss,
         }
 
-    # Tổng kết
+    # Summary
     print(f"\n{'=' * 40}")
-    print("TỔNG KẾT KẾT QUẢ GIỮA CÁC FEATURE")
+    print("SUMMARIZE THE RESULT")
     print(f"{'=' * 40}")
     header = (
         f"{'Feature':<15} | {'Acc':>7} | {'Macro F1':>9} | "
@@ -359,38 +357,38 @@ def main():
         )
     print(f"{'=' * 40}")
 
-    # ======= VẼ BIỂU ĐỒ SO SÁNH =======
-    print("\nĐang vẽ biểu đồ so sánh...")
+    # Draw the chart for comparison
+    print("\nDrawing...")
 
     plot_metric_bars(
         results, "Accuracy",
         ylabel="Accuracy",
-        title="So sánh Accuracy giữa các Feature",
+        title="Features comparison",
         filename="chart_accuracy.png"
     )
 
     plot_metric_bars(
         results, "Macro_F1",
         ylabel="Macro F1-score",
-        title="So sánh Macro F1 giữa các Feature",
+        title="Macro F1-score comparison",
         filename="chart_macro_f1.png"
     )
 
     plot_metric_bars(
         results, "Macro_Precision",
         ylabel="Macro Precision",
-        title="So sánh Precision giữa các Feature",
+        title="Macro Precision comparison",
         filename="chart_precision.png"
     )
 
     plot_metric_bars(
         results, "Macro_Recall",
         ylabel="Macro Recall",
-        title="So sánh Recall giữa các Feature",
+        title="Macro Recall comparison",
         filename="chart_recall.png"
     )
 
-    # Biểu đồ tổng hợp
+    # Summary chart
     plot_multi_metric(results)
 
 

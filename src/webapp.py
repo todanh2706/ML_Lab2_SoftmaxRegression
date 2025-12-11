@@ -129,10 +129,10 @@ def main():
     model = load_trained_model(feature_type)
     
     if model is None:
-        st.error(f"⚠️ Model for **{feature_type}** not found. Please run `main.py` first to train the models!")
+        st.error(f"Model for **{feature_type}** not found. Please run `main.py` first to train the models!")
         st.stop()
         
-    st.sidebar.success(f"✅ Model **{feature_type}** loaded!")
+    st.sidebar.success(f"Model **{feature_type}** loaded!")
     
     # Feature Extractor mapping
     extractors = {
@@ -147,7 +147,7 @@ def main():
     
     with col1:
         st.subheader("Input")
-        tab1, tab2 = st.tabs(["🖌️ Draw", "📤 Upload"])
+        tab1, tab2 = st.tabs(["Draw", "Upload"])
         
         final_image = None
         
