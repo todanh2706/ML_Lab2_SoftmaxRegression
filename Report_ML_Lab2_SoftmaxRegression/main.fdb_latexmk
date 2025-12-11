@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber main"] 1765353687.17514 "main.bcf" "main.bbl" "main" 1765353690.54681 0
-  "main.bcf" 1765353690.41392 107832 446c475cd980f3c10daaaf58840c7620 "pdflatex"
-  "ref/ref.bib" 1765325162 244 0810be99547e6f3295f454437e22fee4 ""
+["biber main"] 1765418942.67867 "main.bcf" "main.bbl" "main" 1765418948.42145 0
+  "main.bcf" 1765418948.30165 107832 446c475cd980f3c10daaaf58840c7620 "pdflatex"
+  "ref/ref.bib" 1765418844.45323 809 7a5b1b172d82eda347a1ef0f50f3ef50 ""
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1765353688.36965 "main.tex" "main.pdf" "main" 1765353690.54708 0
+["pdflatex"] 1765418946.17098 "main.tex" "main.pdf" "main" 1765418948.42175 0
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm" 1136768653 1536 74b7293ec3713bb7fdca8dd1bd1f469c ""
@@ -152,7 +152,7 @@
   "content/section3.tex" 1765325162 14381 bbbfa9e77687459c9605ed524cb9f92c ""
   "content/section4.tex" 1765325162 5696 734abd1f1944a578c6e53f1ce2b81529 ""
   "content/section5.tex" 1765325162 43 5b519caf765176b403bc7b8fe6f1a9bc ""
-  "content/section6.tex" 1765325162 52 5ec067d1317c28ed4464d41f214e3bfb ""
+  "content/section6.tex" 1765418931.65632 4099 8cd1faf201170048491bacc8a01c9298 ""
   "content/title.tex" 1765325162 840 da7be8a8dc7e4bc30ffb89f9285c621f ""
   "hcmus-report-template.sty" 1765325162 4549 bdec568f8466ac3c9ff78ed691099fd1 ""
   "img/block_feature_demo.png" 1765325162 202575 134b26104f724f11a9c4b9bd4dd080f6 ""
@@ -165,14 +165,14 @@
   "img/confusion_matrix_edge_norm.png" 1765325162 78883 041b905524cddb652febba7badeefbc4 ""
   "img/confusion_matrix_pixel_norm.png" 1765325162 72206 a45b6ba34d501bbfd27e608d4c8b2282 ""
   "img/hcmus-logo.png" 1765325162 258629 5b1ca4d1e50ebb745d59a14c962a8fac ""
-  "main.aux" 1765353690.41206 9344 deab523ce0680aeb45d0589a1d36a728 "pdflatex"
-  "main.bbl" 1765353688.3518 466 76d65a242ec496c9b4361af646ff12cb "biber main"
-  "main.lof" 1765353690.41461 1214 766c9193830c3bed915c9e3c0085577a "pdflatex"
-  "main.lot" 1765353689.53138 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "main.out" 1765353690.41311 8778 8b0ef703a9c81f7bde62c0d34aa9bf34 "pdflatex"
-  "main.run.xml" 1765353690.4145 2302 2069853afeeab79edf5ba167d0a9904a "pdflatex"
+  "main.aux" 1765418948.29947 9913 e2da4f2a2c7bbc1ba547f26e90bd33d1 "pdflatex"
+  "main.bbl" 1765418943.92758 3621 68b631b0977abdb42a2a23ca5ced6b1a "biber main"
+  "main.lof" 1765418948.30296 1214 766c9193830c3bed915c9e3c0085577a "pdflatex"
+  "main.lot" 1765418947.40014 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "main.out" 1765418948.30058 9369 12e0e7acdb2ccb3d412186dd81827ad1 "pdflatex"
+  "main.run.xml" 1765418948.30283 2302 4f28993e0c2dc71e8a7591049d36b9a8 "pdflatex"
   "main.tex" 1765325162 1596 807de1d6a53a012e491cc4459b0b5d37 ""
-  "main.toc" 1765353690.41456 4207 7c577a420f01872d18da8f98caf3319a "pdflatex"
+  "main.toc" 1765418948.30291 4503 ccebcb50860612768eb93deec0029f27 "pdflatex"
   "ref/ref.tex" 1765325162 77 ea2032dfa630e6cea8b708b0cbbecc78 ""
   (generated)
   "main.aux"

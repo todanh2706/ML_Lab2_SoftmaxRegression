@@ -35,4 +35,7 @@
 \contentsline {subsection}{\numberline {4.3}Phân tích chi tiết qua Confusion Matrix}{20}{subsection.4.3}%
 \contentsline {section}{\numberline {5}Mô tả ứng dụng}{25}{section.5}%
 \contentsline {section}{\numberline {6}Kết luận và nhận định}{26}{section.6}%
-\contentsline {section}{\numberline {7}Tài liệu tham khảo}{27}{section.7}%
+\contentsline {subsection}{\numberline {6.1}Tổng kết kết quả thực nghiệm}{26}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Nhận định và phân tích}{26}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Cải tiến đề xuất}{27}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Tài liệu tham khảo}{28}{section.7}%

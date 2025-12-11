@@ -1,2 +1,23 @@
 \pagebreak
 \section{Kết luận và nhận định}
+\subsection{Tổng kết kết quả thực nghiệm}
+Trong đồ án này, nhóm đã xây dựng và huấn luyện thành công mô hình Softmax Regression để giải quyết bài toán phân loại chữ số viết tay trên tập dữ liệu MNIST. Hệ thống đã được thử nghiệm với ba chiến lược trích xuất đặc trưng khác nhau: Raw Pixel Intensity, Edge Detection (Canny), và Block Averaging.\\
+Kết quả đánh giá trên tập kiểm thử cho thấy:
+\begin{itemize}
+    \item \textbf{Đặc trưng Raw Pixel Intensity (PIXEL)} mang lại hiệu quả cao nhất. Đây là phương pháp giữ lại toàn vẹn thông tin nhất về cường độ sáng của ảnh.
+    \item \textbf{Đặc trưng Edge Detection (EDGE)} đứng thứ hai. Phương pháp này chứng minh rằng thông tin cấu trúc hình học (đường biên) đóng vai trò quan trọng nhưng việc loại bỏ thông tin cường độ điểm ảnh đã làm giảm nhẹ hiệu năng.
+    \item \textbf{Đặc trưng Block Averaging (BLOCK\_AVG)} có hiệu năng thấp nhất. Việc giảm chiều dữ liệu mạnh (từ 784 xuống 49 chiều) đã làm mất mát các chi tiết cục bộ quan trọng, dẫn đến sự nhầm lẫn cao giữa các cặp số có cấu trúc tương đồng.
+\end{itemize}
+\subsection{Nhận định và phân tích}
+Từ các kết quả trên, nhóm rút ra các nhận định quan trọng về mối quan hệ giữa trích xuất đặc trưng và mô hình tuyến tính:
+\begin{itemize}
+    \item \textbf{Sự đánh đổi giữa Giảm chiều dữ liệu và Độ chính xác:} Mặc dù Block Averaging và Edge Detection giúp giảm đáng kể kích thước vector đặc trưng (đặc biệt là Block Averaging giảm từ 784 xuống 49 chiều), giúp mô hình huấn luyện nhanh hơn và nhẹ hơn, nhưng sự suy giảm độ chính xác là không thể tránh khỏi. Đối với mô hình đơn giản như Softmax Regression, việc cung cấp đầy đủ thông tin chi tiết (Raw Pixel) giúp mô hình tìm ra ranh giới quyết định tuyến tính tốt hơn so với các đặc trưng đã bị lược giản.
+    \item \textbf{Khả năng phân tách các lớp khó:} Phân tích Confusion Matrix cho thấy mô hình sử dụng đặc trưng nén (Block Avg) gặp khó khăn lớn trong việc phân biệt các chữ số có hình dáng xem xem nhau (ví dụ: nhầm lẫn giữa số 5 và 3, số 8 và các số khác). Điều này khẳng định rằng các chi tiết nhỏ, tinh tế (vốn bị làm mờ khi tính trung bình block) là yếu tố quyết định để phân loại chính xác các mẫu nhập nhằng.
+    \item \textbf{Hiệu quả của mô hình Softmax Regression:} Việc đạt độ chính xác trên 92\% chỉ với mô hình tuyến tính và dữ liệu điểm ảnh thô cho thấy Softmax Regression là một baseline mạnh mẽ cho bài toán MNIST. Tuy nhiên, giới hạn của mô hình nằm ở chỗ nó coi từng điểm ảnh là độc lập và không khai thác tốt mối quan hệ không gian (spatial relationship) như các mô hình học sâu hiện đại (ví dụ: CNN).
+\end{itemize}
+\subsection{Cải tiến đề xuất}
+Để cải thiện kết quả hiện tại, một số hướng tiếp cận tiềm năng có thể được thực hiện:
+\begin{itemize}
+    \item \textbf{Cải tiến phương pháp trích xuất đặc trưng:} Thay vì Block Averaging đơn giản, có thể sử dụng phương pháp HOG (Histogram of Oriented Gradients) hoặc PCA (Principal Component Analysis) để giảm chiều dữ liệu nhưng vẫn giữ lại được các thông tin quan trọng hơn về phương sai và cấu trúc.
+    \item \textbf{Tinh chỉnh siêu tham số:} Thử nghiệm thêm các giá trị Learning Rate và Regularization khác nhau để tối ưu hóa sự hội tụ của thuật toán Gradient Descent.
+\end{itemize}
