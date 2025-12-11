@@ -5,8 +5,8 @@ import os
 import matplotlib.pyplot as plt
 from streamlit_drawable_canvas import st_canvas
 
-from model import SoftmaxRegression
-from features import FeatureExtractor
+from utils.model import SoftmaxRegression
+from utils.features import FeatureExtractor
 
 # --- CONFIGURATION ---
 ST_CONFIG = {
@@ -24,7 +24,8 @@ def load_trained_model(feature_name):
     # Look for model in current directory or src/ directory
     possible_paths = [
         f"model_{feature_name.lower()}.npz",
-        os.path.join("src", f"model_{feature_name.lower()}.npz")
+        os.path.join("src", f"model_{feature_name.lower()}.npz"),
+        os.path.join("models", f"model_{feature_name.lower()}.npz")
     ]
     
     model_path = None

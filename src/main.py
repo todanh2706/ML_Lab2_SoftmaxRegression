@@ -10,10 +10,10 @@ from sklearn.metrics import (
     classification_report,
 )
 
-from model import SoftmaxRegression           # Đổi lại nếu file tên khác
-from features import FeatureExtractor
-from data import train_val_split, load_mnist_npz
-from dataLoader import MnistDataloader
+from utils.model import SoftmaxRegression           # Đổi lại nếu file tên khác
+from utils.features import FeatureExtractor
+from utils.data import train_val_split, load_mnist_npz
+from utils.dataLoader import MnistDataloader
 
 
 # Cấu hình Hyperparameters
