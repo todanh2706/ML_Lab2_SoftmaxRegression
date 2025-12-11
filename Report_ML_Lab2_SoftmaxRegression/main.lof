@@ -1,9 +1,0 @@
-\contentsline {figure}{\numberline {1}{\ignorespaces Quy trình trích xuất đặc trưng Block Averaging: từ ảnh chữ số gốc $28 \times 28$ sang ảnh đã được khử chiều $7 \times 7$ và vector đặc trưng chiều $49$. }}{15}{figure.1}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Biểu đồ so sánh các chỉ số Accuracy, Precision, Recall và F1-score giữa các phương pháp trích xuất đặc trưng}}{16}{figure.2}%
-\contentsline {figure}{\numberline {3}{\ignorespaces So sánh độ chính xác (Accuracy) giữa các đặc trưng}}{17}{figure.3}%
-\contentsline {figure}{\numberline {4}{\ignorespaces So sánh chỉ số Macro F1-score giữa các đặc trưng}}{18}{figure.4}%
-\contentsline {figure}{\numberline {5}{\ignorespaces So sánh Macro Precision giữa các đặc trưng}}{19}{figure.5}%
-\contentsline {figure}{\numberline {6}{\ignorespaces So sánh Macro Recall giữa các đặc trưng}}{20}{figure.6}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Confusion matrix chuẩn hoá - Feature PIXEL}}{21}{figure.7}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Confusion matrix chuẩn hoá - Feature BLOCK\_AVG}}{22}{figure.8}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Confusion matrix chuẩn hoá - Feature EDGE}}{23}{figure.9}%
