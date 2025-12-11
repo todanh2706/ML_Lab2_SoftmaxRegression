@@ -47,7 +47,7 @@ Quy tắc lọc biên hoạt động như sau:
     \item Các điểm ảnh nằm trong khoảng $T_{min} \leq G < T_{max}$ được xem là biên yếu (weak edges) và chỉ được giữ lại nếu chúng có liên kết hình học với một biên chắc chắn. Điều này giúp đảm bảo tính liên tục của các nét chữ viết tay và loại bỏ các nhiễu rời rạc.
 \end{itemize}
 \subsubsection{Quy trình tiền xử lý và biểu diễn đặc trưng}
-Trước khi áp dụng thuật toán Canny, dữ liệu ảnh đầu vào được chuyển đổi sang định dạng \texttt{uint8} (số nguyên 8-bit không dấu) để tương thích với thư viện OpenCV:
+Trước khi áp dụng thuật toán Canny, dữ liệu ảnh đầu vào được chuyển đổi sang định dạng \texttt{uint8} (số nguyên 8-bit không dấu) để tương thích với thư viện OpenCV \cite{bradski2000opencv}:
 \begin{center}
     $\displaystyle I_{uint8} = \text{cast}(I_{raw}, \text{uint8})$.
 \end{center}

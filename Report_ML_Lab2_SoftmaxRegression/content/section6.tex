@@ -18,6 +18,6 @@ Từ các kết quả trên, nhóm rút ra các nhận định quan trọng về
 \subsection{Cải tiến đề xuất}
 Để cải thiện kết quả hiện tại, một số hướng tiếp cận tiềm năng có thể được thực hiện:
 \begin{itemize}
-    \item \textbf{Cải tiến phương pháp trích xuất đặc trưng:} Thay vì Block Averaging đơn giản, có thể sử dụng phương pháp HOG (Histogram of Oriented Gradients) hoặc PCA (Principal Component Analysis) để giảm chiều dữ liệu nhưng vẫn giữ lại được các thông tin quan trọng hơn về phương sai và cấu trúc.
+    \item \textbf{Cải tiến phương pháp trích xuất đặc trưng:} Thay vì Block Averaging đơn giản, có thể sử dụng phương pháp HOG (Histogram of Oriented Gradients) \cite{dalal2005histograms} hoặc PCA (Principal Component Analysis) \cite{pearson1901lines} để giảm chiều dữ liệu nhưng vẫn giữ lại được các thông tin quan trọng hơn về phương sai và cấu trúc.
     \item \textbf{Tinh chỉnh siêu tham số:} Thử nghiệm thêm các giá trị Learning Rate và Regularization khác nhau để tối ưu hóa sự hội tụ của thuật toán Gradient Descent.
 \end{itemize}

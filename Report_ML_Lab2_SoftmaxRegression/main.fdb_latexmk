@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber main"] 1765418942.67867 "main.bcf" "main.bbl" "main" 1765418948.42145 0
-  "main.bcf" 1765418948.30165 107832 446c475cd980f3c10daaaf58840c7620 "pdflatex"
-  "ref/ref.bib" 1765418844.45323 809 7a5b1b172d82eda347a1ef0f50f3ef50 ""
+["biber main"] 1765422021.38195 "main.bcf" "main.bbl" "main" 1765458083.39751 0
+  "main.bcf" 1765458083.23687 108121 0bbbfe701e3ceebd8e423058ad20d6e6 "pdflatex"
+  "ref/ref.bib" 1765421962.64085 1661 3488ae1f0fc65c4cfd930bf4d1ef4f94 ""
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1765418946.17098 "main.tex" "main.pdf" "main" 1765418948.42175 0
+["pdflatex"] 1765458080.13929 "main.tex" "main.pdf" "main" 1765458083.39815 0
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm" 1136768653 1536 74b7293ec3713bb7fdca8dd1bd1f469c ""
@@ -147,12 +147,12 @@
   "/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1762682374 5467155 19efa205003f9ecad95fbbaa6ff24da1 ""
   "/usr/local/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1762682341 3345721 8597e4ef293c794d3624f28fb5cc5b67 ""
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
-  "content/section1.tex" 1765353667.10743 8306 6f20b939c7b2b24918f378f1a119dc35 ""
+  "content/section1.tex" 1765421994.19687 8331 e1dae2f4040689b3586a17a69e6dfc90 ""
   "content/section2.tex" 1765325162 10780 50ba144d154a88d091b4ec2357e57d81 ""
-  "content/section3.tex" 1765325162 14381 bbbfa9e77687459c9605ed524cb9f92c ""
-  "content/section4.tex" 1765325162 5696 734abd1f1944a578c6e53f1ce2b81529 ""
+  "content/section3.tex" 1765421909.76687 14406 cd982c28970a54bc450ccf5e9fd73578 ""
+  "content/section4.tex" 1765458063.21245 6342 2a2d826efc8b0dac0ef255edb918fbfb ""
   "content/section5.tex" 1765325162 43 5b519caf765176b403bc7b8fe6f1a9bc ""
-  "content/section6.tex" 1765418931.65632 4099 8cd1faf201170048491bacc8a01c9298 ""
+  "content/section6.tex" 1765421952.28034 4150 4637ea5eb14129f94caeb55f5e35c897 ""
   "content/title.tex" 1765325162 840 da7be8a8dc7e4bc30ffb89f9285c621f ""
   "hcmus-report-template.sty" 1765325162 4549 bdec568f8466ac3c9ff78ed691099fd1 ""
   "img/block_feature_demo.png" 1765325162 202575 134b26104f724f11a9c4b9bd4dd080f6 ""
@@ -165,14 +165,14 @@
   "img/confusion_matrix_edge_norm.png" 1765325162 78883 041b905524cddb652febba7badeefbc4 ""
   "img/confusion_matrix_pixel_norm.png" 1765325162 72206 a45b6ba34d501bbfd27e608d4c8b2282 ""
   "img/hcmus-logo.png" 1765325162 258629 5b1ca4d1e50ebb745d59a14c962a8fac ""
-  "main.aux" 1765418948.29947 9913 e2da4f2a2c7bbc1ba547f26e90bd33d1 "pdflatex"
-  "main.bbl" 1765418943.92758 3621 68b631b0977abdb42a2a23ca5ced6b1a "biber main"
-  "main.lof" 1765418948.30296 1214 766c9193830c3bed915c9e3c0085577a "pdflatex"
-  "main.lot" 1765418947.40014 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "main.out" 1765418948.30058 9369 12e0e7acdb2ccb3d412186dd81827ad1 "pdflatex"
-  "main.run.xml" 1765418948.30283 2302 4f28993e0c2dc71e8a7591049d36b9a8 "pdflatex"
+  "main.aux" 1765458083.23354 10719 3bbf9b73b8377a505c196ce6c169cd38 "pdflatex"
+  "main.bbl" 1765422022.6977 7606 8349eb6afa7cb9183b96c707e9f8fd58 "biber main"
+  "main.lof" 1765458083.23801 1321 14131a4d89e0fd6347eb54c60724738e "pdflatex"
+  "main.lot" 1765458081.89 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "main.out" 1765458083.23559 9535 575f815c87cd46dfa0f946b285ef4626 "pdflatex"
+  "main.run.xml" 1765458083.23779 2302 4f28993e0c2dc71e8a7591049d36b9a8 "pdflatex"
   "main.tex" 1765325162 1596 807de1d6a53a012e491cc4459b0b5d37 ""
-  "main.toc" 1765418948.30291 4503 ccebcb50860612768eb93deec0029f27 "pdflatex"
+  "main.toc" 1765458083.23789 4540 f01a3ef4a7385d5bc24f4b5eb3739d41 "pdflatex"
   "ref/ref.tex" 1765325162 77 ea2032dfa630e6cea8b708b0cbbecc78 ""
   (generated)
   "main.aux"

@@ -1,74 +1,68 @@
 \pagebreak
 \section{Đánh giá và phân tích kết quả}
 
-\subsection{Kết quả dự đoán của mô hình với từng loại feature}
+\subsection{Kết quả dự đoán của mô hình với từng loại đặc trưng}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{img/comparison_all_metrics.png}
-\caption{So sánh tổng quan Accuracy, Precision, Recall và F1-score giữa các feature}
+\caption{Biểu đồ so sánh các chỉ số Accuracy, Precision, Recall và F1-score giữa các phương pháp trích xuất đặc trưng}
 \label{fig:compare_all_metrics}
 \end{figure}
-
-Đầu tiên, ta có thể thấy rằng cả ba dạng feature (PIXEL, BLOCK\_AVG, EDGE) đều cho kết quả dự đoán khá tốt, với độ chính xác dao động trong khoảng 0.87 - 0.92. Tuy nhiên, sự khác biệt giữa chúng là rõ ràng:
-
+Kết quả thực nghiệm cho thấy cả ba phương pháp trích xuất đặc trưng (PIXEL, BLOCK\_AVG, EDGE) đều mang lại hiệu suất dự đoán khả quan, với độ chính xác dao động trong khoảng $0.87 - 0.92$. Tuy nhiên, có sự phân hóa rõ rệt về hiệu quả giữa các phương pháp:
 \begin{itemize}
-    \item \textbf{PIXEL} đạt Accuracy cao nhất $\approx 0.922$, chứng tỏ mô hình học tốt nhất khi toàn bộ thông tin pixel được giữ nguyên.
-    \item \textbf{EDGE} xếp thứ hai với Accuracy $\approx 0.881$, thể hiện rằng thông tin về đường biên vẫn mang giá trị phân biệt mạnh.
-    \item \textbf{BLOCK\_AVG} có Accuracy thấp nhất $\approx 0.870$, cho thấy việc giảm chiều mạnh làm mất nhiều chi tiết quan trọng.
+    \item \textbf{PIXEL} đạt độ chính xác (Accuracy) cao nhất $\approx 0.922$, cho thấy mô hình đạt hiệu suất tối ưu khi bảo toàn toàn bộ thông tin điểm ảnh.
+    \item \textbf{EDGE} xếp thứ hai với Accuracy $\approx 0.881$, khẳng định rằng thông tin về đường biên vẫn mang giá trị phân loại lớn đối với tập dữ liệu này.
+    \item \textbf{BLOCK\_AVG} có Accuracy thấp nhất $\approx 0.870$, phản ánh việc giảm chiều dữ liệu quá mức đã lược bỏ nhiều chi tiết thiết yếu cho quá trình phân lớp.
 \end{itemize}
 
-=> Mô hình có feature đầy đủ (PIXEL) đạt performance tốt nhất, trong khi hai mô hình còn lại có xu hướng giảm độ chính xác khi thông tin đặc trưng bị giản lược.
+Như vậy, mô hình sử dụng đặc trưng nguyên bản (PIXEL) đạt hiệu năng tốt nhất, trong khi hai phương pháp còn lại cho thấy xu hướng giảm độ chính xác khi thông tin đặc trưng bị lược giản.
 
-\subsection{So sánh giữa các feature với nhau}
+\subsection{So sánh giữa các đặc trưng với nhau}
 
-\subsubsection*{So sánh Accuracy}
+\subsubsection*{So sánh về độ chính xác (Accuracy)}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{img/chart_accuracy.png}
-\caption{So sánh Accuracy giữa các feature}
+\caption{So sánh độ chính xác (Accuracy) giữa các đặc trưng}
 \label{fig:chart_accuracy}
 \end{figure}
 
-Feature PIXEL đạt Accuracy cao nhất ($0.922$), tiếp theo là EDGE ($0.881$), và cuối cùng là BLOCK\_AVG ($0.8698$). 
-=> Cho thấy mức độ chi tiết của feature ảnh hưởng trực tiếp đến khả năng phân loại của Softmax Regression.
+Đặc trưng PIXEL dẫn đầu về độ chính xác ($0.922$), theo sau là EDGE ($0.881$) và cuối cùng là BLOCK\_AVG ($0.8698$). Điều này minh chứng rằng độ chi tiết của dữ liệu đầu vào có tác động trực tiếp đến khả năng phân loại của mô hình Softmax Regression.
 
-\subsubsection*{So sánh Macro F1-score}
+\subsubsection*{So sánh về chỉ số Macro F1-score}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{img/chart_macro_f1.png}
-\caption{So sánh Macro F1-score giữa các feature}
+\caption{So sánh chỉ số Macro F1-score giữa các đặc trưng}
 \label{fig:chart_macro_f1}
 \end{figure}
 
-PIXEL tiếp tục đứng đầu với Macro F1 $\approx 0.9204$.  
-EDGE đạt $\approx 0.8794$ và BLOCK\_AVG đạt khoảng $0.8672$.  
-=> Thứ hạng các feature tương tự Accuracy, chứng tỏ hiệu năng ổn định trên toàn bộ lớp thay vì chỉ tập trung một vài lớp.
+PIXEL tiếp tục đứng đầu với Macro F1 $\approx 0.9204$. EDGE đạt $\approx 0.8794$ và BLOCK\_AVG đạt khoảng $0.8672$. Thứ hạng về F1-score tương đồng với Accuracy, cho thấy sự ổn định về hiệu năng của mô hình trên toàn bộ các lớp dữ liệu.
 
-\subsubsection*{So sánh Precision và Recall}
+\subsubsection*{So sánh về Precision và Recall}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{img/chart_precision.png}
-\caption{So sánh Macro Precision giữa các feature}
+\caption{So sánh Macro Precision giữa các đặc trưng}
 \label{fig:chart_precision}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{img/chart_recall.png}
-\caption{So sánh Macro Recall giữa các feature}
+\caption{So sánh Macro Recall giữa các đặc trưng}
 \label{fig:chart_recall}
 \end{figure}
 
-Precision và Recall của PIXEL đều trên $0.92$, cao nhất trong ba feature. EDGE duy trì mức trung bình $\approx 0.88$ và BLOCK\_AVG thấp nhất khoảng $0.867$.  
-=> Cả Precision và Recall đều cho thấy mô hình với feature BLOCK\_AVG có xu hướng bỏ sót và nhầm lẫn giữa các lớp nhiều hơn.
+Cả Precision và Recall của PIXEL đều trên $0.92$, cao nhất trong ba đặc trưng. EDGE duy trì mức trung bình $\approx 0.88$ và BLOCK\_AVG thấp nhất khoảng $0.867$. Cả Precision và Recall đều cho thấy mô hình với feature BLOCK\_AVG có xu hướng bỏ sót và nhầm lẫn giữa các lớp nhiều hơn.
 
-\subsection{Phân tích chi tiết qua Confusion Matrix}
+\subsection{Phân tích chi tiết qua ma trận nhầm lẫn (Confusion Matrix)}
 
-Trong phần này, ta phân tích mức độ nhầm lẫn giữa các lớp dựa trên confusion matrix của từng feature.
+Phần này tập trung phân tích mức độ phân loại sai giữa các lớp dựa trên Confusion Matrix đã được chuẩn hóa.
 
 \subsubsection*{PIXEL}
 
@@ -79,10 +73,10 @@ Trong phần này, ta phân tích mức độ nhầm lẫn giữa các lớp d�
 \label{fig:cm_pixel}
 \end{figure}
 
-Mô hình với PIXEL cho thấy đường chéo chính rất đậm:
+Đối với PIXEL, các giá trị trên đường chéo chính chiếm tỷ trọng lớn:
 \begin{itemize}
     \item Các lớp 0, 1, 6 đạt tỉ lệ dự đoán đúng trên 95\%.
-    \item Model có 1 sự nhầm lẫn nhẹ giữa 3 và 5, phản ánh sự tương đồng hình dạng giữa 2 số này.
+    \item Tồn tại một sự nhầm lẫn nhẹ giữa 3 và 5, phản ánh sự tương đồng hình dạng giữa hai số này.
 \end{itemize}
 
 \subsubsection*{BLOCK\_AVG}
@@ -99,8 +93,7 @@ BLOCK\_AVG có mức nhầm lẫn cao hơn đáng kể:
     \item Lớp 5 bị nhầm sang lớp 3 khoảng 6\%.
     \item Lớp 8 bị nhầm với 1, 3, và 5 (2-4\%).
 \end{itemize}
-
-=> Khi giảm ảnh xuống 7$\times$7, mô hình mắc nhiều sai sót hơn khi phân tách các lớp có cấu trúc tương tự.  
+Cho thấy khi giảm ảnh xuống 7$\times$7, mô hình mắc nhiều sai sót hơn khi phân tách các lớp có cấu trúc tương tự.  
 
 \subsubsection*{EDGE}
 
@@ -115,15 +108,11 @@ BLOCK\_AVG có mức nhầm lẫn cao hơn đáng kể:
     \item Các lớp có hình dạng rõ ràng như 0, 1, 6 được dự đoán chính xác cao.
     \item Tuy nhiên, tương tự như BLOCK\_AVG, EDGE cũng bị nhầm lẫn khi xác định các số còn lại, đặc biệt là 5 và 8.
 \end{itemize}
-
-=> EDGE tốt hơn BLOCK\_AVG nhưng chưa vượt được PIXEL vì thiếu thông tin cường độ pixel.
-
-Từ toàn bộ số liệu và biểu đồ trên, ta có thể rút ra:
+Mặc dù EDGE vượt trội hơn BLOCK\_AVG, nó vẫn chưa đạt được hiệu suất của PIXEL do thiếu hụt thông tin về cường độ điểm ảnh. Tổng hợp các phân tích trên, ta có thể kết luận:
 
 \begin{itemize}
     \item \textbf{PIXEL} là feature mạnh nhất, đạt toàn bộ metric cao nhất (Accuracy, Precision, Recall, F1-score).
     \item \textbf{EDGE} giữ lại cấu trúc biên đủ tốt nên đứng thứ hai.
     \item \textbf{BLOCK\_AVG} làm mất nhiều chi tiết quan trọng, dẫn đến performance thấp nhất.
 \end{itemize}
-
-=> Mặc dù BLOCK\_AVG và EDGE có thể giúp giảm số chiều và thời gian xử lý, chúng làm giảm đáng kể khả năng phân loại của Softmax Regression.
+Mặc dù BLOCK\_AVG và EDGE có ưu điểm về giảm số chiều dữ liệu và chi phí tính toán, việc áp dụng chúng đã dẫn đến sự suy giảm đáng kể khả năng phân loại của mô hình Softmax Regression trong bài toán này.

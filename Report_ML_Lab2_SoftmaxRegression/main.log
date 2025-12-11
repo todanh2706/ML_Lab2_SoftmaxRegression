@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.9)  11 DEC 2025 09:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.9)  11 DEC 2025 20:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -948,7 +948,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.i}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.35 ... qua Confusion Matrix}{20}{subsection.4.3}
+l.35 ...«n (Confusion Matrix)}{20}{subsection.4.3}
                                                   % [1])
 \tf@toc=\write5
 \openout5 = `main.toc'.
@@ -1021,7 +1021,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 [12]
 
 [13]
-<img/block_feature_demo.png, id=317, 1011.78pt x 289.08pt>
+<img/block_feature_demo.png, id=321, 1011.78pt x 289.08pt>
 File: img/block_feature_demo.png Graphic file (type png)
 <use img/block_feature_demo.png>
 Package pdftex.def Info: img/block_feature_demo.png  used on input line 142.
@@ -1031,7 +1031,7 @@ Package pdftex.def Info: img/block_feature_demo.png  used on input line 142.
 [14]) (./content/section4.tex
 
 [15 <./img/block_feature_demo.png>]
-<img/comparison_all_metrics.png, id=335, 722.7pt x 433.62pt>
+<img/comparison_all_metrics.png, id=339, 722.7pt x 433.62pt>
 File: img/comparison_all_metrics.png Graphic file (type png)
 <use img/comparison_all_metrics.png>
 Package pdftex.def Info: img/comparison_all_metrics.png  used on input line 8.
@@ -1039,66 +1039,58 @@ Package pdftex.def Info: img/comparison_all_metrics.png  used on input line 8.
 
 
 [16 <./img/comparison_all_metrics.png>]
-<img/chart_accuracy.png, id=341, 505.89pt x 361.35pt>
+<img/chart_accuracy.png, id=345, 505.89pt x 361.35pt>
 File: img/chart_accuracy.png Graphic file (type png)
 <use img/chart_accuracy.png>
-Package pdftex.def Info: img/chart_accuracy.png  used on input line 29.
+Package pdftex.def Info: img/chart_accuracy.png  used on input line 27.
 (pdftex.def)             Requested size: 455.2979pt x 325.21751pt.
-
-Overfull \hbox (21.3924pt too wide) in paragraph at lines 34--36
-\T5/cmr/m/n/12 Feature PIXEL ^^_¤t Ac-cu-racy cao nh§t ($\OT1/cmr/m/n/12 0\OML/
-cmm/m/it/12 :\OT1/cmr/m/n/12 922$\T5/cmr/m/n/12 ), ti¸p theo l  EDGE ($\OT1/cmr
-/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 881$\T5/cmr/m/n/12 ), v  cuèi còng l
-  BLOCK_AVG
- []
-
-<img/chart_macro_f1.png, id=342, 505.89pt x 361.35pt>
+<img/chart_macro_f1.png, id=346, 505.89pt x 361.35pt>
 File: img/chart_macro_f1.png Graphic file (type png)
 <use img/chart_macro_f1.png>
-Package pdftex.def Info: img/chart_macro_f1.png  used on input line 41.
+Package pdftex.def Info: img/chart_macro_f1.png  used on input line 38.
 (pdftex.def)             Requested size: 455.2979pt x 325.21751pt.
 
 
 [17 <./img/chart_accuracy.png>]
-<img/chart_precision.png, id=349, 505.89pt x 361.35pt>
+<img/chart_precision.png, id=353, 505.89pt x 361.35pt>
 File: img/chart_precision.png Graphic file (type png)
 <use img/chart_precision.png>
-Package pdftex.def Info: img/chart_precision.png  used on input line 54.
+Package pdftex.def Info: img/chart_precision.png  used on input line 49.
 (pdftex.def)             Requested size: 455.2979pt x 325.21751pt.
 
 
 [18 <./img/chart_macro_f1.png>]
-<img/chart_recall.png, id=356, 505.89pt x 361.35pt>
+<img/chart_recall.png, id=360, 505.89pt x 361.35pt>
 File: img/chart_recall.png Graphic file (type png)
 <use img/chart_recall.png>
-Package pdftex.def Info: img/chart_recall.png  used on input line 61.
+Package pdftex.def Info: img/chart_recall.png  used on input line 56.
 (pdftex.def)             Requested size: 455.2979pt x 325.21751pt.
 
 
 [19 <./img/chart_precision.png>]
-<img/confusion_matrix_pixel_norm.png, id=363, 433.62pt x 361.35pt>
+<img/confusion_matrix_pixel_norm.png, id=367, 433.62pt x 361.35pt>
 File: img/confusion_matrix_pixel_norm.png Graphic file (type png)
 <use img/confusion_matrix_pixel_norm.png>
 Package pdftex.def Info: img/confusion_matrix_pixel_norm.png  used on input lin
-e 77.
+e 71.
 (pdftex.def)             Requested size: 455.2979pt x 379.43422pt.
 
 
 [20 <./img/chart_recall.png>]
-<img/confusion_matrix_block_avg_norm.png, id=370, 433.62pt x 361.35pt>
+<img/confusion_matrix_block_avg_norm.png, id=374, 433.62pt x 361.35pt>
 File: img/confusion_matrix_block_avg_norm.png Graphic file (type png)
 <use img/confusion_matrix_block_avg_norm.png>
 Package pdftex.def Info: img/confusion_matrix_block_avg_norm.png  used on input
- line 92.
+ line 86.
 (pdftex.def)             Requested size: 455.2979pt x 379.43422pt.
 
 
 [21 <./img/confusion_matrix_pixel_norm.png>]
-<img/confusion_matrix_edge_norm.png, id=377, 433.62pt x 361.35pt>
+<img/confusion_matrix_edge_norm.png, id=381, 433.62pt x 361.35pt>
 File: img/confusion_matrix_edge_norm.png Graphic file (type png)
 <use img/confusion_matrix_edge_norm.png>
 Package pdftex.def Info: img/confusion_matrix_edge_norm.png  used on input line
- 109.
+ 102.
 (pdftex.def)             Requested size: 455.2979pt x 379.43422pt.
 
 
@@ -1120,16 +1112,16 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 12E0E7ACDB2CCB3D412186DD81827AD1;9369.
+(rerunfilecheck)             Checksum: 575F815C87CD46DFA0F946B285EF4626;9535.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 21399 strings out of 473190
- 362225 string characters out of 5715800
- 1193635 words of memory out of 5000000
- 44271 multiletter control sequences out of 15000+600000
+ 21413 strings out of 473190
+ 362814 string characters out of 5715800
+ 1194957 words of memory out of 5000000
+ 44282 multiletter control sequences out of 15000+600000
  579693 words of font info for 75 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  78i,12n,81p,724b,1437s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1151,10 +1143,10 @@ ist/fonts/type1/vntex/vnr/vnr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/t
 ype1/vntex/vnr/vnr8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/vntex/v
 nr/vnti12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/vntex/vnr/vntt12.
 pfb>
-Output written on main.pdf (33 pages, 1012059 bytes).
+Output written on main.pdf (33 pages, 1014995 bytes).
 PDF statistics:
- 513 PDF objects out of 1000 (max. 8388607)
- 417 compressed objects within 5 object streams
- 105 named destinations out of 1000 (max. 500000)
+ 521 PDF objects out of 1000 (max. 8388607)
+ 425 compressed objects within 5 object streams
+ 108 named destinations out of 1000 (max. 500000)
  339 words of extra memory for PDF output out of 10000 (max. 10000000)
 
