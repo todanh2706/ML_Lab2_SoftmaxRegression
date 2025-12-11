@@ -3,3 +3,4 @@ pyenv
 __pycache__/
 input/
 deleted/
+ignore/

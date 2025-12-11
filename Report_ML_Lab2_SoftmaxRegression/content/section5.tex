@@ -1,2 +1,23 @@
 \pagebreak
 \section{Mô tả ứng dụng}
+Nhóm đã xây dụng một ứng dụng web đơn giản dùng để tương tác với mô hình, cho phép người dùng vẽ hình chữ viết tay bằng chuột hoặc upload ảnh chữ viết tay để cho model dự đoán số và hiển thị các thông số liên quan như độ tin cậy, xác suất dự đoán.\\
+Các công nghệ đã sử dụng:
+\begin{itemize}
+    \item \textbf{Streamlit: }Đây là framework nhẹ dùng để xây dựng một giao diện web tương tác với người dùng, thích hợp để trình bày các dữ liệu, mô hình, kết quả trong lĩnh vực AI/ML và Data Science. Đặc biệt streamlit có hỗ trợ drawable canvas để vẽ và nhận file ảnh
+    \item \textbf{Pillow: }Đây là thư viện chuyên xử lý điểm ảnh, được nhóm sử dụng để xử lý ảnh từ ảnh upload hay vẽ tay sang dạng ảnh 28 x 28 để phù hợp với input của model.
+    \item \textbf{Numpy: }Thư viện dùng để tính toán số học
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{demo.png}
+    \caption{Ảnh minh họa cho ứng dụng web demo}
+    \label{fig:placeholder}
+\end{figure}
+
+Hướng dẫn sử dụng:
+\begin{itemize}
+    \item Ở góc bên trái là nơi chọn load model theo feature, có thể chọn \textbf{PIXEL, EDGE,} hoặc \textbf{BLOCK\_AVG}
+    \item Ở giữa, người dùng có thể chọn vẽ trực tiếp lên canvas, khi thả chuột model sẽ thực hiện dự đoán lên chính bức ảnh đó.
+    \item Ngoài ra người dùng còn có thể chọn upload ảnh viết tay tay vì vẽ trực tiếp
+    \item Sau khi model dự đoán người dùng có thể xem ảnh sau khi được preprocess, xác suất và độ tin cậy ở bên phải màn hình.
+\end{itemize}
