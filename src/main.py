@@ -46,11 +46,11 @@ def load_mnist_data():
     # Check the exist file
     for name, path in files.items():
         if not os.path.exists(path):
-            print(f"Lỗi: Không tìm thấy file {name} tại đường dẫn: {path}")
-            print("Vui lòng tải dataset MNIST (định dạng idx) và đặt vào thư mục 'data'.")
+            print(f"Error: File {name} not found at: {path}")
+            print("Please load dataset MNIST (idx) and place it into 'data' folder.")
             return None, None, None, None
 
-    print(f"Đang tải dữ liệu từ: {data_dir} ...")
+    print(f"Loading data from: {data_dir} ...")
 
     # Use dataLoader.py to reda
     mnist_dataloader = MnistDataloader(

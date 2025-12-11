@@ -25,7 +25,7 @@ def load_trained_model(feature_name):
     possible_paths = [
         f"model_{feature_name.lower()}.npz",
         os.path.join("src", f"model_{feature_name.lower()}.npz"),
-        os.path.join("src/models", f"model_{feature_name.lower()}.npz")
+        os.path.join("models", f"model_{feature_name.lower()}.npz")
     ]
     
     model_path = None
