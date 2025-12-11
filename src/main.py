@@ -3,7 +3,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import (
+from utils.metrics import (
     accuracy_score,
     precision_recall_fscore_support,
     confusion_matrix,
